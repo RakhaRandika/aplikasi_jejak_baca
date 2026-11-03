@@ -1,8 +1,3 @@
--- =====================================================
--- BukuKuy - Skema database (sesuai ERD)
--- Jalankan di Supabase: SQL Editor -> New query -> paste -> Run
--- =====================================================
-
 -- Tabel USER (nama "users" karena "user" adalah kata kunci di PostgreSQL)
 CREATE TABLE IF NOT EXISTS users (
   id_user   SERIAL PRIMARY KEY,

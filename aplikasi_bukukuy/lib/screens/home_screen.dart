@@ -9,7 +9,6 @@ import '../service/auth_service.dart';
 import '../widgets/book_card.dart';
 import 'book_detail_screen.dart';
 import 'favorite_screen.dart';
-import 'histroy_screen.dart';
 import 'login_screen.dart';
 
 
@@ -218,7 +217,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onRemove: _toggleFavorite,
               onOpen: _openDetail,
             ),
-            HistoryScreen(onBack: () => _goTo(0)),
           ],
         ),
         bottomNavigationBar: _buildBottomNavbar(),

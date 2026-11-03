@@ -41,7 +41,7 @@ class AuthService {
         // Token kedaluwarsa / akun dihapus -> harus login ulang
         await logout();
       } else {
-        // Server tidak bisa dihubungi: jangan buang sesi, coba lagi nanti
+ 
         token = null;
       }
     }

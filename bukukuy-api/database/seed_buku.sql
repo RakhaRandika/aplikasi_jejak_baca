@@ -1,8 +1,3 @@
--- BukuKuy - 20 buku terbaru (terbitan 2023-2025) lengkap dengan cover & deskripsi
--- Jalankan di Supabase: SQL Editor -> New query -> paste semua -> Run
--- PERHATIAN: isi tabel buku (dan favorites) dikosongkan dulu, lalu diisi 20 buku ini.
-
--- Tambah kolom cover (aman dijalankan berkali-kali)
 ALTER TABLE buku ADD COLUMN IF NOT EXISTS cover_url TEXT;
 
 TRUNCATE TABLE buku RESTART IDENTITY CASCADE;
