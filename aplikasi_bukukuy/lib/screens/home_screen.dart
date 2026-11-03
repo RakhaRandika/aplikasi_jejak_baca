@@ -1,16 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../main.dart';
+import '../enums/load_state.dart';
 import '../models/book.dart';
+import '../routes/app_routes.dart';
 import '../service/api_service.dart';
 import '../service/auth_service.dart';
+import '../widgets/app_button_nav.dart';
 import '../widgets/book_card.dart';
 import 'book_detail_screen.dart';
 import 'favorite_screen.dart';
-import 'login_screen.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,14 +23,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
+  LoadState _booksState = LoadState.loading;
+  String _booksError = '';
   List<Book> _books = [];
-  List<Book> _favorites = [];
-  bool _loading = true;
-  String? _error;
   String _search = '';
   Timer? _debounce;
 
-  void _goTo(int index) => setState(() => _currentIndex = index);
+  LoadState _favState = LoadState.loading;
+  String _favError = '';
+  List<Book> _favorites = [];
+  // id buku yang sedang dikirim ke server, supaya tap ganda diabaikan
+  final Set<String> _pendingFavorites = {};
 
   @override
   void initState() {
@@ -44,40 +48,51 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _loadBooks() async {
+  Future<void> _loadBooks({bool showSpinner = true}) async {
     final search = _search;
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    if (showSpinner) setState(() => _booksState = LoadState.loading);
     try {
       final books = await ApiService.getBooks(search: search);
       // Abaikan hasil pencarian lama kalau kata kuncinya sudah berubah
       if (!mounted || search != _search) return;
       setState(() {
         _books = books;
-        _loading = false;
+        _booksState = books.isEmpty ? LoadState.empty : LoadState.success;
       });
     } catch (e) {
       if (!mounted || search != _search) return;
       setState(() {
-        _error = e.toString();
-        _loading = false;
+        _booksError = e.toString();
+        _booksState = LoadState.error;
       });
     }
   }
 
   Future<void> _loadFavorites() async {
+    setState(() => _favState = LoadState.loading);
     try {
       final favorites = await ApiService.getFavorites();
       if (!mounted) return;
-      setState(() => _favorites = favorites);
-    } catch (_) {
-      // Error koneksi sudah ditampilkan oleh _loadBooks
+      setState(() {
+        _favorites = favorites;
+        _favState = favorites.isEmpty ? LoadState.empty : LoadState.success;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _favError = e.toString();
+        _favState = LoadState.error;
+      });
     }
   }
 
-  Future<void> _refresh() => Future.wait([_loadBooks(), _loadFavorites()]);
+  Future<void> _refresh() =>
+      Future.wait([_loadBooks(showSpinner: false), _loadFavorites()]);
+
+  void _retry() {
+    _loadBooks();
+    _loadFavorites();
+  }
 
   void _onSearchChanged(String value) {
     _debounce?.cancel();
@@ -91,6 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // true = berhasil disimpan ke server
   Future<bool> _toggleFavorite(Book book) async {
+    if (_pendingFavorites.contains(book.idBuku)) return false;
+    _pendingFavorites.add(book.idBuku);
+
     final wasFavorite = _isFavorite(book);
     try {
       if (wasFavorite) {
@@ -98,217 +116,58 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         await ApiService.tambahFavorite(book.idBuku);
       }
-      if (!mounted) return true;
-      setState(() {
-        _favorites = wasFavorite
-            ? _favorites.where((f) => f.idBuku != book.idBuku).toList()
-            : [book, ..._favorites];
-      });
+      if (mounted) {
+        setState(() {
+          _favorites = wasFavorite
+              ? _favorites.where((f) => f.idBuku != book.idBuku).toList()
+              : [book, ..._favorites];
+          _favState = _favorites.isEmpty ? LoadState.empty : LoadState.success;
+        });
+      }
       return true;
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: const Color(0xFFDC2626),
+            ),
+          );
       }
       return false;
+    } finally {
+      _pendingFavorites.remove(book.idBuku);
     }
   }
 
   void _openDetail(Book book) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => BookDetailScreen(
-          book: book,
-          isFavorite: _isFavorite(book),
-          onToggleFavorite: _toggleFavorite,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBookList() {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.navy));
-    }
-    if (_error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.wifi_off, size: 48, color: Color(0xFF9E9E9E)),
-              const SizedBox(height: 12),
-              Text(_error!, textAlign: TextAlign.center),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: _refresh,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.navy,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Coba lagi'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    if (_books.isEmpty) {
-      return const Center(child: Text('Buku tidak ditemukan'));
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const padding = 16.0;
-        const spacing = 12.0;
-        final cardWidth = (constraints.maxWidth - padding * 2 - spacing * 2) / 3;
-
-        return RefreshIndicator(
-          onRefresh: _refresh,
-          child: GridView.builder(
-            padding: const EdgeInsets.all(padding),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: spacing,
-              mainAxisSpacing: spacing,
-              mainAxisExtent: cardWidth * 1.45 + 72,
-            ),
-            itemCount: _books.length,
-            itemBuilder: (context, index) {
-              final book = _books[index];
-              return BookCard(
-                book: book,
-                width: cardWidth,
-                isFavorite: _isFavorite(book),
-                onTap: () => _openDetail(book),
-                onFavoriteTap: () => _toggleFavorite(book),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
-      
-      canPop: _currentIndex == 0,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _goTo(0);
-      },
-      child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  Expanded(child: _buildBookList()),
-                ],
-              ),
-            ),
-            FavoriteScreen(
-              onBack: () => _goTo(0),
-              favorites: _favorites,
-              onRemove: _toggleFavorite,
-              onOpen: _openDetail,
-            ),
-          ],
-        ),
-        bottomNavigationBar: _buildBottomNavbar(),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavbar() {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 64,
-          child: Row(
-            children: [
-              _buildNavItem(
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home,
-                label: 'Beranda',
-                isActive: _currentIndex == 0,
-                onTap: () => _goTo(0),
-              ),
-              _buildNavItem(
-                icon: Icons.favorite_border,
-                activeIcon: Icons.favorite,
-                label: 'Favorit',
-                isActive: _currentIndex == 1,
-                onTap: () => _goTo(1),
-              ),
-              _buildNavItem(
-                icon: Icons.history,
-                activeIcon: Icons.history,
-                label: 'Riwayat',
-                isActive: _currentIndex == 2,
-                onTap: () => _goTo(2),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required IconData icon,
-    required IconData activeIcon,
-    required String label,
-    required bool isActive,
-    required VoidCallback onTap,
-  }) {
-    final color = isActive ? AppColors.navy : const Color(0xFF9E9E9E);
-
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(isActive ? activeIcon : icon, size: 24, color: color),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                color: color,
-              ),
-            ),
-          ],
-        ),
+    Get.to(
+      () => BookDetailScreen(
+        book: book,
+        isFavorite: _isFavorite(book),
+        onToggleFavorite: _toggleFavorite,
       ),
     );
   }
 
   Future<void> _confirmLogout() async {
-    final yakin = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
+    final yakin = await Get.dialog<bool>(
+      AlertDialog(
         title: const Text('Keluar dari akun?'),
         content: const Text('Kamu perlu login lagi untuk masuk.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Get.back(result: false),
             child: const Text('Batal'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Keluar', style: TextStyle(color: AppColors.red)),
+            onPressed: () => Get.back(result: true),
+            child: const Text(
+              'Keluar',
+              style: TextStyle(color: Color(0xFFDC2626)),
+            ),
           ),
         ],
       ),
@@ -316,88 +175,276 @@ class _HomeScreenState extends State<HomeScreen> {
     if (yakin != true) return;
 
     await AuthService.logout();
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-      (_) => false,
+    Get.offAllNamed(AppRoutes.login);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) setState(() => _currentIndex = 0);
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            _buildBeranda(),
+            FavoriteScreen(
+              state: _favState,
+              errorMessage: _favError,
+              favorites: _favorites,
+              onRetry: _loadFavorites,
+              onRemove: _toggleFavorite,
+              onOpen: _openDetail,
+            ),
+          ],
+        ),
+        bottomNavigationBar: AppButtonNav(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+        ),
+      ),
     );
   }
 
+  Widget _buildBeranda() {
+    return Column(
+      children: [
+        _buildHeader(),
+        Expanded(
+          child: Container(
+            color: const Color(0xFFFAF8F3),
+            child: SafeArea(
+              top: false,
+              bottom: false,
+              child: _buildBody(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Header navy: warna penuh sampai pinggir layar, SafeArea di dalam Container
   Widget _buildHeader() {
+    if (MediaQuery.orientationOf(context) == Orientation.landscape) {
+      // Landscape: sapaan, kolom cari, dan tombol keluar dalam satu baris
+      return Container(
+        color: const Color(0xFF1E1A4D),
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 12, 8),
+            child: Row(
+              children: [
+                Expanded(flex: 2, child: _buildGreeting()),
+                const SizedBox(width: 16),
+                Expanded(flex: 3, child: _buildSearchBox()),
+                _buildLogoutButton(),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Container(
-      width: double.infinity,
-      color: AppColors.navy,
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      color: const Color(0xFF1E1A4D),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 12, 20),
+          child: Column(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Selamat Pembaca 👋',
-                      style: TextStyle(color: Color(0xFFC7D2FE), fontSize: 12),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      AuthService.currentUser?.nama ?? '',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              Row(
+                children: [
+                  Expanded(child: _buildGreeting()),
+                  _buildLogoutButton(),
+                ],
               ),
-              IconButton(
-                tooltip: 'Keluar',
-                onPressed: _confirmLogout,
-                icon: const Icon(Icons.logout, color: Color(0xFFC7D2FE)),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: _buildSearchBox(),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: AppColors.navyLight,
-              borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGreeting() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                'Selamat Pembaca 👋',
+                style: TextStyle(color: Color(0xFFC7D2FE), fontSize: 12),
+              ),
             ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, size: 18, color: Color(0xFFA5B4FC)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    onChanged: _onSearchChanged,
-                    textInputAction: TextInputAction.search,
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: 'Cari judul buku',
-                      hintStyle: TextStyle(
-                        color: Colors.indigo[200],
-                        fontSize: 13,
-                      ),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                  ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                AuthService.currentUser?.nama ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return IconButton(
+      tooltip: 'Keluar',
+      onPressed: _confirmLogout,
+      icon: const Icon(Icons.logout, color: Color(0xFFC7D2FE)),
+    );
+  }
+
+  Widget _buildSearchBox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2560),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.search, size: 18, color: Color(0xFFA5B4FC)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              onChanged: _onSearchChanged,
+              textInputAction: TextInputAction.search,
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+              decoration: const InputDecoration(
+                hintText: 'Cari judul buku',
+                hintStyle: TextStyle(color: Color(0xFFA5B4FC), fontSize: 13),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 14),
+              ),
             ),
           ),
         ],
       ),
     );
   }
-}
 
+  Widget _buildBody() {
+    switch (_booksState) {
+      case LoadState.initial:
+      case LoadState.loading:
+        return _buildMessage(
+          const CircularProgressIndicator(color: Color(0xFF1E1A4D)),
+        );
+      case LoadState.empty:
+        return _buildMessage(const Text('Buku tidak ditemukan'));
+      case LoadState.error:
+        return _buildMessage(
+          Column(
+            children: [
+              const Icon(Icons.wifi_off, size: 48, color: Color(0xFF9E9E9E)),
+              const SizedBox(height: 12),
+              Text(_booksError, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: _retry,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E1A4D),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Coba lagi'),
+              ),
+            ],
+          ),
+        );
+      case LoadState.success:
+        break;
+    }
+    return _buildGrid();
+  }
+
+  // Spacer - Widget - Spacer di tengah area (vertikal + horizontal)
+  Widget _buildMessage(Widget child) {
+    return Column(
+      children: [
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(children: [const Spacer(), child, const Spacer()]),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  // Grid dibuat dari baris Row: tiap baris = Row [kartu, Spacer, kartu, Spacer, kartu]
+  Widget _buildGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const padding = 16.0;
+        const spacing = 12.0;
+        final columns = (constraints.maxWidth / 130).floor().clamp(3, 8);
+        final cardWidth =
+            ((constraints.maxWidth - padding * 2 - spacing * (columns - 1)) /
+                    columns)
+                .floorToDouble();
+        final rowCount = (_books.length / columns).ceil();
+
+        return RefreshIndicator(
+          onRefresh: _refresh,
+          child: ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(padding),
+            itemCount: rowCount,
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: spacing),
+            itemBuilder: (context, row) =>
+                _buildGridRow(row, columns, cardWidth),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGridRow(int row, int columns, double cardWidth) {
+    final children = <Widget>[];
+    for (var col = 0; col < columns; col++) {
+      if (col > 0) children.add(const Spacer());
+      final index = row * columns + col;
+      if (index < _books.length) {
+        final book = _books[index];
+        children.add(
+          BookCard(
+            book: book,
+            width: cardWidth,
+            isFavorite: _isFavorite(book),
+            onTap: () => _openDetail(book),
+            onFavoriteTap: () => _toggleFavorite(book),
+          ),
+        );
+      } else {
+        // Baris terakhir yang belum penuh diisi kotak kosong
+        children.add(SizedBox(width: cardWidth));
+      }
+    }
+    return Row(children: children);
+  }
+}

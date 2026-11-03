@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../main.dart';
-
 // Label kecil + kolom input, dipakai di layar login dan daftar
 class AuthField extends StatelessWidget {
   final String label;
@@ -29,44 +27,58 @@ class AuthField extends StatelessWidget {
   Widget build(BuildContext context) {
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.border),
+      borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
     );
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey,
-            letterSpacing: 0.5,
-          ),
+        // Label rata kiri: Widget - Spacer
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF9E9E9E),
+                letterSpacing: 0.5,
+              ),
+            ),
+            const Spacer(),
+          ],
         ),
         const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          obscureText: obscureText,
-          onSubmitted: onSubmitted,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-            filled: true,
-            fillColor: Colors.white,
-            suffixIcon: suffixIcon,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                keyboardType: keyboardType,
+                textInputAction: textInputAction,
+                obscureText: obscureText,
+                onSubmitted: onSubmitted,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintStyle: const TextStyle(
+                    color: Color(0xFF9E9E9E),
+                    fontSize: 14,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  suffixIcon: suffixIcon,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border.copyWith(
+                    borderSide: const BorderSide(color: Color(0xFF1E1A4D)),
+                  ),
+                ),
+              ),
             ),
-            border: border,
-            enabledBorder: border,
-            focusedBorder: border.copyWith(
-              borderSide: const BorderSide(color: AppColors.navy),
-            ),
-          ),
+          ],
         ),
       ],
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../main.dart';
 import '../models/book.dart';
 import '../widgets/book_cover.dart';
 
@@ -23,146 +23,223 @@ class BookDetailScreen extends StatefulWidget {
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
   late bool _isFavorite = widget.isFavorite;
-  bool _saving = false;
+  bool _isSaving = false;
 
   Future<void> _toggleFavorite() async {
-    setState(() => _saving = true);
+    setState(() => _isSaving = true);
     final berhasil = await widget.onToggleFavorite(widget.book);
     if (!mounted) return;
     setState(() {
       if (berhasil) _isFavorite = !_isFavorite;
-      _saving = false;
+      _isSaving = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final book = widget.book;
+    if (MediaQuery.orientationOf(context) == Orientation.landscape) {
+      return Scaffold(body: _buildLandscape());
+    }
+    return Scaffold(body: _buildPortrait());
+  }
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.navy,
+  // Portrait: header navy berisi cover, di bawahnya isi yang bisa digulir
+  Widget _buildPortrait() {
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF1E1A4D),
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+              child: Column(
+                children: [
+                  _buildTopBar(),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      BookCover(
+                        coverUrl: widget.book.coverUrl,
+                        width: 140,
+                        height: 205,
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            color: const Color(0xFFFAF8F3),
+            child: SafeArea(top: false, child: _buildContent()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Landscape: dua kolom, panel navy (cover) di kiri dan isi di kanan
+  Widget _buildLandscape() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Container(
+            color: const Color(0xFF1E1A4D),
             child: SafeArea(
-              bottom: false,
+              right: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+                padding: const EdgeInsets.fromLTRB(4, 4, 4, 12),
                 child: Column(
                   children: [
+                    _buildTopBar(),
+                    const Spacer(),
                     Row(
                       children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          ),
-                          onPressed: () => Navigator.of(context).pop(),
+                        const Spacer(),
+                        BookCover(
+                          coverUrl: widget.book.coverUrl,
+                          width: 110,
+                          height: 160,
                         ),
                         const Spacer(),
-                        IconButton(
-                          tooltip: _isFavorite
-                              ? 'Hapus dari favorit'
-                              : 'Tambah ke favorit',
-                          onPressed: _saving ? null : _toggleFavorite,
-                          icon: Icon(
-                            _isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: _isFavorite ? AppColors.red : Colors.white,
-                          ),
-                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    BookCover(coverUrl: book.coverUrl, width: 140, height: 205),
+                    const Spacer(),
                   ],
                 ),
               ),
             ),
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                Text(
-                  book.judul,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.navy,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  book.penulis,
-                  style: const TextStyle(fontSize: 14, color: AppColors.orange),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    _buildInfo('Penerbit', book.penerbit),
-                    const SizedBox(width: 12),
-                    _buildInfo('Tahun terbit', book.tahunTerbit),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Deskripsi',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.navy,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  (book.deskripsi ?? '').isEmpty
-                      ? 'Belum ada deskripsi.'
-                      : book.deskripsi!,
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.6,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Container(
+            color: const Color(0xFFFAF8F3),
+            child: SafeArea(left: false, child: _buildContent()),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  // Widget - Spacer - Widget (kembali di kiri, hati di kanan)
+  Widget _buildTopBar() {
+    return Row(
+      children: [
+        IconButton(
+          tooltip: 'Kembali',
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),
+        const Spacer(),
+        IconButton(
+          tooltip: _isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit',
+          onPressed: _isSaving ? null : _toggleFavorite,
+          icon: Icon(
+            _isFavorite ? Icons.favorite : Icons.favorite_border,
+            color: _isFavorite ? const Color(0xFFDC2626) : Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    final book = widget.book;
+
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        Text(
+          book.judul,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E1A4D),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          book.penulis,
+          style: const TextStyle(fontSize: 14, color: Color(0xFFF97316)),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(child: _buildInfo('Penerbit', book.penerbit)),
+            const SizedBox(width: 12),
+            Expanded(child: _buildInfo('Tahun terbit', book.tahunTerbit)),
+          ],
+        ),
+        const SizedBox(height: 20),
+        const Text(
+          'Deskripsi',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E1A4D),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          (book.deskripsi ?? '').isEmpty
+              ? 'Belum ada deskripsi.'
+              : book.deskripsi!,
+          style: const TextStyle(
+            fontSize: 14,
+            height: 1.6,
+            color: Color(0xFF424242),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildInfo(String label, String? value) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(fontSize: 11, color: Color(0xFF9E9E9E)),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              (value ?? '').isEmpty ? '-' : value!,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppColors.navy,
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E5E5)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF9E9E9E),
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  (value ?? '').isEmpty ? '-' : value!,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E1A4D),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
