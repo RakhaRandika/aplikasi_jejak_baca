@@ -24,7 +24,7 @@ class ApiService {
   static const baseUrl = '$_apiUrl/api';
   static const _timeout = Duration(seconds: 15);
 
-  // Diisi oleh AuthService setelah login / restoreSession
+
   static String? token;
 
   static Map<String, String> get _headers => {
@@ -32,7 +32,7 @@ class ApiService {
         if (token != null) 'Authorization': 'Bearer $token',
       };
 
-  // Hasil login & register: { token, user }
+  
   static Future<Map<String, dynamic>> login(String email, String password) async {
     final data = await _send(
       () => http.post(
@@ -82,7 +82,7 @@ class ApiService {
     return _toBooks(data);
   }
 
-  // 409 = buku sudah ada di favorit, dianggap berhasil
+
   static Future<void> tambahFavorite(String idBuku) async {
     await _send(
       () => http.post(
@@ -94,7 +94,7 @@ class ApiService {
     );
   }
 
-  // 404 = buku sudah tidak ada di favorit, dianggap berhasil
+
   static Future<void> hapusFavorite(String idBuku) async {
     await _send(
       () => http.delete(
@@ -112,7 +112,6 @@ class ApiService {
         .toList();
   }
 
-  // Semua kegagalan dibungkus jadi ApiException
   static Future<dynamic> _send(
     Future<http.Response> Function() request, {
     List<int> okStatus = const [],
