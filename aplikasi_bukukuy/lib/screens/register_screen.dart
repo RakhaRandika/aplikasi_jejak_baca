@@ -79,7 +79,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(body: _buildPortrait());
   }
 
-  // Portrait: header navy di atas, form di bawahnya, ajakan daftar di dasar layar
   Widget _buildPortrait() {
     return Container(
       color: const Color(0xFF1E1A4D),
@@ -350,7 +349,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Spacer - Widget - Spacer (tengah horizontal)
   Widget _buildPrompt() {
     return Row(
       children: [

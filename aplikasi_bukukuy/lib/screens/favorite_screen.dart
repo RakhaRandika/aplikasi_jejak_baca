@@ -4,7 +4,6 @@ import '../enums/load_state.dart';
 import '../models/book.dart';
 import '../widgets/book_cover.dart';
 
-// Tab Favorit di dalam HomeScreen
 class FavoriteScreen extends StatelessWidget {
   final LoadState state;
   final String errorMessage;
@@ -149,7 +148,6 @@ class FavoriteScreen extends StatelessWidget {
     return _buildList();
   }
 
-  // Spacer - Widget - Spacer di tengah area; Expanded supaya teks panjang turun baris
   Widget _buildMessage(Widget child) {
     return Column(
       children: [
@@ -169,7 +167,6 @@ class FavoriteScreen extends StatelessWidget {
     );
   }
 
-  // 1 kolom; 2 kolom bila lebar >= 600
   Widget _buildList() {
     return LayoutBuilder(
       builder: (context, constraints) {

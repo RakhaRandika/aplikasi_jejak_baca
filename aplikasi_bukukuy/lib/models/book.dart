@@ -17,7 +17,6 @@ class Book {
     this.coverUrl,
   });
 
-  // id & tahun dari server bisa berupa angka atau string, jadi diubah lewat toString()
   factory Book.fromJson(Map<String, dynamic> j) => Book(
         idBuku: j['id_buku'].toString(),
         judul: (j['judul'] ?? '').toString(),

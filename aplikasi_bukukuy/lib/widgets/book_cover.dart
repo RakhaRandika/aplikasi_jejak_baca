@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Cover buku: spinner saat memuat, ikon buku bila kosong / gagal dimuat
 class BookCover extends StatelessWidget {
   final String? coverUrl;
   final double width;
@@ -63,7 +62,6 @@ class BookCover extends StatelessWidget {
     );
   }
 
-  // Spacer - Widget - Spacer di tengah (vertikal + horizontal)
   Widget _buildCentered(Widget child) {
     return Container(
       color: const Color(0xFF2A2560),

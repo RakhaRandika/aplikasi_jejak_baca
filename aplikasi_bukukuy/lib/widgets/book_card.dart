@@ -40,7 +40,6 @@ class BookCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            // Tinggi judul tetap (2 baris) supaya semua kartu dalam satu baris sama tinggi
             SizedBox(
               height: 34,
               child: Column(

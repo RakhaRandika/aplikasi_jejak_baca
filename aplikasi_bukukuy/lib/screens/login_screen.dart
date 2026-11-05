@@ -65,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(body: _buildPortrait());
   }
 
-  // Portrait: header navy di atas, form di bawahnya, ajakan daftar di dasar layar
   Widget _buildPortrait() {
     return Container(
       color: const Color(0xFF1E1A4D),
@@ -109,7 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Landscape: dua kolom, panel navy di kiri dan isi di kanan
   Widget _buildLandscape() {
     return Row(
       children: [

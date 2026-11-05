@@ -3,8 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import 'api_service.dart';
 
-// Menyimpan sesi login di HP supaya user tidak perlu login ulang
-// setiap kali aplikasi dibuka.
 class AuthService {
   static const _tokenKey = 'auth_token';
 
@@ -22,7 +20,6 @@ class AuthService {
     await _simpanSesi(data);
   }
 
-  // Dipanggil saat aplikasi dibuka: cek token lama masih berlaku atau tidak
   static Future<void> restoreSession() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_tokenKey);
@@ -33,10 +30,8 @@ class AuthService {
       currentUser = await ApiService.me();
     } on ApiException catch (e) {
       if (e.statusCode == 401) {
-        // Token kedaluwarsa / akun dihapus -> harus login ulang
         await logout();
       } else {
-        // Server tidak terjangkau: token tetap tersimpan, tapi buka layar login dulu
         ApiService.token = null;
       }
     }

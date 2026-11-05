@@ -226,10 +226,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Header navy: warna penuh sampai pinggir layar, SafeArea di dalam Container
   Widget _buildHeader() {
     if (MediaQuery.orientationOf(context) == Orientation.landscape) {
-      // Landscape: sapaan, kolom cari, dan tombol keluar dalam satu baris
       return Container(
         color: const Color(0xFF1E1A4D),
         child: SafeArea(
@@ -381,7 +379,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return _buildGrid();
   }
 
-  // Spacer - Widget - Spacer di tengah area (vertikal + horizontal)
   Widget _buildMessage(Widget child) {
     return Column(
       children: [
@@ -395,7 +392,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Grid dibuat dari baris Row: tiap baris = Row [kartu, Spacer, kartu, Spacer, kartu]
   Widget _buildGrid() {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -441,7 +437,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       } else {
-        // Baris terakhir yang belum penuh diisi kotak kosong
         children.add(SizedBox(width: cardWidth));
       }
     }

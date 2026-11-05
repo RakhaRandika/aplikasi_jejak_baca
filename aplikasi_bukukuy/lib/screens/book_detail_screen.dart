@@ -7,7 +7,6 @@ import '../widgets/book_cover.dart';
 class BookDetailScreen extends StatefulWidget {
   final Book book;
   final bool isFavorite;
-  // Mengembalikan true kalau berhasil disimpan ke server
   final Future<bool> Function(Book book) onToggleFavorite;
 
   const BookDetailScreen({
@@ -43,7 +42,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return Scaffold(body: _buildPortrait());
   }
 
-  // Portrait: header navy berisi cover, di bawahnya isi yang bisa digulir
   Widget _buildPortrait() {
     return Column(
       children: [
@@ -83,7 +81,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     );
   }
 
-  // Landscape: dua kolom, panel navy (cover) di kiri dan isi di kanan
   Widget _buildLandscape() {
     return Row(
       children: [
@@ -128,7 +125,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     );
   }
 
-  // Widget - Spacer - Widget (kembali di kiri, hati di kanan)
   Widget _buildTopBar() {
     return Row(
       children: [
