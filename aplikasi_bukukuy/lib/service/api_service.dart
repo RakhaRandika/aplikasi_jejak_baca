@@ -16,10 +16,9 @@ class ApiException implements Exception {
 }
 
 class ApiService {
-  // Ganti lewat: flutter run --dart-define=API_URL=http://192.168.1.10:3000
   static const _apiUrl = String.fromEnvironment(
     'API_URL',
-    defaultValue: 'http://10.0.2.2:3000',
+    defaultValue: 'http://localhost:3000',
   );
   static const baseUrl = '$_apiUrl/api';
   static const _timeout = Duration(seconds: 15);
