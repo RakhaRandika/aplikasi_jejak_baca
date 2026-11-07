@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../enums/load_state.dart';
 import '../models/book.dart';
+import '../theme/app_colors.dart';
 import '../widgets/book_cover.dart';
 
 class FavoriteScreen extends StatelessWidget {
@@ -29,12 +30,8 @@ class FavoriteScreen extends StatelessWidget {
         _buildHeader(),
         Expanded(
           child: Container(
-            color: const Color(0xFFFAF8F3),
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              child: _buildBody(),
-            ),
+            color: AppColors.background,
+            child: SafeArea(top: false, bottom: false, child: _buildBody()),
           ),
         ),
       ],
@@ -45,7 +42,7 @@ class FavoriteScreen extends StatelessWidget {
     final isReady = state == LoadState.success || state == LoadState.empty;
 
     return Container(
-      color: const Color(0xFF1E1A4D),
+      color: AppColors.navy,
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -75,7 +72,7 @@ class FavoriteScreen extends StatelessWidget {
                           ? '${favorites.length} buku tersimpan'
                           : 'Buku yang kamu simpan',
                       style: const TextStyle(
-                        color: Color(0xFFC7D2FE),
+                        color: AppColors.blueFaded,
                         fontSize: 14,
                       ),
                     ),
@@ -93,78 +90,34 @@ class FavoriteScreen extends StatelessWidget {
     switch (state) {
       case LoadState.initial:
       case LoadState.loading:
-        return _buildMessage(
-          const CircularProgressIndicator(color: Color(0xFF1E1A4D)),
-        );
+        return _buildStateMessage(const [
+          CircularProgressIndicator(color: AppColors.navy),
+        ]);
       case LoadState.empty:
-        return _buildMessage(
-          Column(
-            children: [
-              const Icon(Icons.favorite, size: 72, color: Color(0xFFD4C4E9)),
-              const SizedBox(height: 16),
-              const Text(
-                'Belum ada favorit',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E1A4D),
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Tekan ikon hati pada buku yang kamu suka untuk menyimpannya di sini',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xFF9E9E9E),
-                  fontSize: 14,
-                  height: 1.5,
-                ),
-              ),
-            ],
+        return _buildStateMessage(const [
+          Icon(Icons.favorite, size: 72, color: AppColors.purpleFaded),
+          SizedBox(height: 16),
+          Text(
+            'Belum ada favorit',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.navy,
+            ),
           ),
-        );
+          SizedBox(height: 8),
+          Text(
+            'Tekan ikon hati pada buku yang kamu suka untuk menyimpannya di sini',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.grey, fontSize: 14, height: 1.5),
+          ),
+        ]);
       case LoadState.error:
-        return _buildMessage(
-          Column(
-            children: [
-              const Icon(Icons.wifi_off, size: 48, color: Color(0xFF9E9E9E)),
-              const SizedBox(height: 12),
-              Text(errorMessage, textAlign: TextAlign.center),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: onRetry,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E1A4D),
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Coba lagi'),
-              ),
-            ],
-          ),
-        );
+        return _buildError(errorMessage, onRetry);
       case LoadState.success:
         break;
     }
     return _buildList();
-  }
-
-  Widget _buildMessage(Widget child) {
-    return Column(
-      children: [
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Row(
-            children: [
-              const Spacer(),
-              Flexible(flex: 6, child: child),
-              const Spacer(),
-            ],
-          ),
-        ),
-        const Spacer(),
-      ],
-    );
   }
 
   Widget _buildList() {
@@ -197,6 +150,7 @@ class FavoriteScreen extends StatelessWidget {
     );
   }
 
+  // Satu baris buku di daftar: cover, judul, penulis, dan tombol hapus
   Widget _buildItem(Book book) {
     return InkWell(
       onTap: () => onOpen(book),
@@ -205,9 +159,9 @@ class FavoriteScreen extends StatelessWidget {
         height: 92,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE5E5E5)),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
@@ -232,7 +186,7 @@ class FavoriteScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF1E1A4D),
+                            color: AppColors.navy,
                           ),
                         ),
                       ),
@@ -248,7 +202,7 @@ class FavoriteScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF9E9E9E),
+                            color: AppColors.grey,
                           ),
                         ),
                       ),
@@ -260,12 +214,45 @@ class FavoriteScreen extends StatelessWidget {
             ),
             IconButton(
               tooltip: 'Hapus dari favorit',
-              icon: const Icon(Icons.favorite, color: Color(0xFFDC2626)),
+              icon: const Icon(Icons.favorite, color: AppColors.red),
               onPressed: () => onRemove(book),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Pesan di tengah area: Spacer - isi - Spacer
+  Widget _buildStateMessage(List<Widget> children) {
+    return Column(
+      children: [
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            children: [Expanded(child: Column(children: children))],
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildError(String message, VoidCallback onRetry) {
+    return _buildStateMessage([
+      const Icon(Icons.wifi_off, size: 48, color: AppColors.grey),
+      const SizedBox(height: 12),
+      Text(message, textAlign: TextAlign.center),
+      const SizedBox(height: 12),
+      ElevatedButton(
+        onPressed: onRetry,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.navy,
+          foregroundColor: AppColors.white,
+        ),
+        child: const Text('Coba lagi'),
+      ),
+    ]);
   }
 }

@@ -23,16 +23,17 @@ class ApiService {
   static const baseUrl = '$_apiUrl/api';
   static const _timeout = Duration(seconds: 15);
 
-
   static String? token;
 
   static Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      };
+    'Content-Type': 'application/json',
+    if (token != null) 'Authorization': 'Bearer $token',
+  };
 
-  
-  static Future<Map<String, dynamic>> login(String email, String password) async {
+  static Future<Map<String, dynamic>> login(
+    String email,
+    String password,
+  ) async {
     final data = await _send(
       () => http.post(
         Uri.parse('$baseUrl/auth/login'),
@@ -67,8 +68,9 @@ class ApiService {
 
   static Future<List<Book>> getBooks({String? search}) async {
     final uri = Uri.parse('$baseUrl/buku').replace(
-      queryParameters:
-          (search != null && search.isNotEmpty) ? {'search': search} : null,
+      queryParameters: (search != null && search.isNotEmpty)
+          ? {'search': search}
+          : null,
     );
     final data = await _send(() => http.get(uri, headers: _headers));
     return _toBooks(data);
@@ -81,7 +83,6 @@ class ApiService {
     return _toBooks(data);
   }
 
-
   static Future<void> tambahFavorite(String idBuku) async {
     await _send(
       () => http.post(
@@ -92,7 +93,6 @@ class ApiService {
       okStatus: const [409],
     );
   }
-
 
   static Future<void> hapusFavorite(String idBuku) async {
     await _send(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../models/book.dart';
 import '../widgets/book_cover.dart';
+import '../theme/app_colors.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -46,7 +47,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF1E1A4D),
+          color: AppColors.navy,
           child: SafeArea(
             bottom: false,
             child: Padding(
@@ -73,7 +74,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
         Expanded(
           child: Container(
-            color: const Color(0xFFFAF8F3),
+            color: AppColors.background,
             child: SafeArea(top: false, child: _buildContent()),
           ),
         ),
@@ -87,7 +88,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         Expanded(
           flex: 2,
           child: Container(
-            color: const Color(0xFF1E1A4D),
+            color: AppColors.navy,
             child: SafeArea(
               right: false,
               child: Padding(
@@ -117,7 +118,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         Expanded(
           flex: 3,
           child: Container(
-            color: const Color(0xFFFAF8F3),
+            color: AppColors.background,
             child: SafeArea(left: false, child: _buildContent()),
           ),
         ),
@@ -139,7 +140,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           onPressed: _isSaving ? null : _toggleFavorite,
           icon: Icon(
             _isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: _isFavorite ? const Color(0xFFDC2626) : Colors.white,
+            color: _isFavorite ? AppColors.red : Colors.white,
           ),
         ),
       ],
@@ -157,13 +158,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1E1A4D),
+            color: AppColors.navy,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           book.penulis,
-          style: const TextStyle(fontSize: 14, color: Color(0xFFF97316)),
+          style: const TextStyle(fontSize: 14, color: AppColors.orange),
         ),
         const SizedBox(height: 16),
         Row(
@@ -179,7 +180,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E1A4D),
+            color: AppColors.navy,
           ),
         ),
         const SizedBox(height: 8),
@@ -190,20 +191,21 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           style: const TextStyle(
             fontSize: 14,
             height: 1.6,
-            color: Color(0xFF424242),
+            color: AppColors.textDark,
           ),
         ),
       ],
     );
   }
 
+  // Kotak kecil berisi label dan nilai, contoh: Penerbit / Gramedia
   Widget _buildInfo(String label, String? value) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         children: [
@@ -212,10 +214,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Color(0xFF9E9E9E),
-                  ),
+                  style: const TextStyle(fontSize: 11, color: AppColors.grey),
                 ),
               ),
             ],
@@ -229,7 +228,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E1A4D),
+                    color: AppColors.navy,
                   ),
                 ),
               ),

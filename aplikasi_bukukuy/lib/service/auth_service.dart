@@ -15,7 +15,11 @@ class AuthService {
     await _simpanSesi(data);
   }
 
-  static Future<void> register(String nama, String email, String password) async {
+  static Future<void> register(
+    String nama,
+    String email,
+    String password,
+  ) async {
     final data = await ApiService.register(nama, email, password);
     await _simpanSesi(data);
   }

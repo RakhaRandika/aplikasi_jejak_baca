@@ -10,8 +10,9 @@ import '../service/api_service.dart';
 import '../service/auth_service.dart';
 import '../widgets/app_button_nav.dart';
 import '../widgets/book_card.dart';
-import 'book_detail_screen.dart';
-import 'favorite_screen.dart';
+import './book_detail_screen.dart';
+import './favorite_screen.dart';
+import '../theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -132,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ..showSnackBar(
             SnackBar(
               content: Text(e.toString()),
-              backgroundColor: const Color(0xFFDC2626),
+              backgroundColor: AppColors.red,
             ),
           );
       }
@@ -164,10 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: const Text(
-              'Keluar',
-              style: TextStyle(color: Color(0xFFDC2626)),
-            ),
+            child: const Text('Keluar', style: TextStyle(color: AppColors.red)),
           ),
         ],
       ),
@@ -214,22 +212,20 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildHeader(),
         Expanded(
           child: Container(
-            color: const Color(0xFFFAF8F3),
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              child: _buildBody(),
-            ),
+            color: AppColors.background,
+            child: SafeArea(top: false, bottom: false, child: _buildBody()),
           ),
         ),
       ],
     );
   }
 
+  // Header navy: sapaan + nama, tombol keluar, dan kolom cari.
+  // Portrait: dua baris. Landscape: satu baris.
   Widget _buildHeader() {
     if (MediaQuery.orientationOf(context) == Orientation.landscape) {
       return Container(
-        color: const Color(0xFF1E1A4D),
+        color: AppColors.navy,
         child: SafeArea(
           bottom: false,
           child: Padding(
@@ -248,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Container(
-      color: const Color(0xFF1E1A4D),
+      color: AppColors.navy,
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -276,12 +272,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGreeting() {
     return Column(
       children: [
-        Row(
+        const Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 'Selamat Pembaca 👋',
-                style: TextStyle(color: Color(0xFFC7D2FE), fontSize: 12),
+                style: TextStyle(color: AppColors.blueFaded, fontSize: 12),
               ),
             ),
           ],
@@ -295,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
                 ),
@@ -311,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return IconButton(
       tooltip: 'Keluar',
       onPressed: _confirmLogout,
-      icon: const Icon(Icons.logout, color: Color(0xFFC7D2FE)),
+      icon: const Icon(Icons.logout, color: AppColors.blueFaded),
     );
   }
 
@@ -319,21 +315,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2560),
+        color: AppColors.navyLight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, size: 18, color: Color(0xFFA5B4FC)),
+          const Icon(Icons.search, size: 18, color: AppColors.iconBlue),
           const SizedBox(width: 8),
           Expanded(
             child: TextField(
               onChanged: _onSearchChanged,
               textInputAction: TextInputAction.search,
-              style: const TextStyle(color: Colors.white, fontSize: 13),
+              style: const TextStyle(color: AppColors.white, fontSize: 13),
               decoration: const InputDecoration(
                 hintText: 'Cari judul buku',
-                hintStyle: TextStyle(color: Color(0xFFA5B4FC), fontSize: 13),
+                hintStyle: TextStyle(color: AppColors.iconBlue, fontSize: 13),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(vertical: 14),
@@ -349,47 +345,17 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (_booksState) {
       case LoadState.initial:
       case LoadState.loading:
-        return _buildMessage(
-          const CircularProgressIndicator(color: Color(0xFF1E1A4D)),
-        );
+        return _buildStateMessage(const [
+          CircularProgressIndicator(color: AppColors.navy),
+        ]);
       case LoadState.empty:
-        return _buildMessage(const Text('Buku tidak ditemukan'));
+        return _buildStateMessage(const [Text('Buku tidak ditemukan')]);
       case LoadState.error:
-        return _buildMessage(
-          Column(
-            children: [
-              const Icon(Icons.wifi_off, size: 48, color: Color(0xFF9E9E9E)),
-              const SizedBox(height: 12),
-              Text(_booksError, textAlign: TextAlign.center),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: _retry,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E1A4D),
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Coba lagi'),
-              ),
-            ],
-          ),
-        );
+        return _buildError(_booksError, _retry);
       case LoadState.success:
         break;
     }
     return _buildGrid();
-  }
-
-  Widget _buildMessage(Widget child) {
-    return Column(
-      children: [
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Row(children: [const Spacer(), child, const Spacer()]),
-        ),
-        const Spacer(),
-      ],
-    );
   }
 
   Widget _buildGrid() {
@@ -441,5 +407,38 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return Row(children: children);
+  }
+
+  // Pesan di tengah area: Spacer - isi - Spacer
+  Widget _buildStateMessage(List<Widget> children) {
+    return Column(
+      children: [
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            children: [Expanded(child: Column(children: children))],
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildError(String message, VoidCallback onRetry) {
+    return _buildStateMessage([
+      const Icon(Icons.wifi_off, size: 48, color: AppColors.grey),
+      const SizedBox(height: 12),
+      Text(message, textAlign: TextAlign.center),
+      const SizedBox(height: 12),
+      ElevatedButton(
+        onPressed: onRetry,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.navy,
+          foregroundColor: AppColors.white,
+        ),
+        child: const Text('Coba lagi'),
+      ),
+    ]);
   }
 }

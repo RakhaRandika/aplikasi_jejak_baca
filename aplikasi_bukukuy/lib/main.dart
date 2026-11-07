@@ -5,12 +5,13 @@ import 'package:get/get.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 import 'service/auth_service.dart';
+import 'theme/app_colors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFFFFFFFF),
+      statusBarColor: AppColors.white,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
     ),
@@ -28,8 +29,8 @@ class BukukuyApp extends StatelessWidget {
       title: 'Bukukuy',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFFAF8F3),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E1A4D)),
+        scaffoldBackgroundColor: AppColors.background,
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.navy),
         useMaterial3: true,
       ),
       initialRoute: AuthService.isLoggedIn ? AppRoutes.home : AppRoutes.login,

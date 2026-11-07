@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../routes/app_routes.dart';
 import '../service/api_service.dart';
 import '../service/auth_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/auth_field.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -64,40 +65,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: const Color(0xFFDC2626),
-        ),
+        SnackBar(content: Text(message), backgroundColor: AppColors.red),
       );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.orientationOf(context) == Orientation.landscape) {
-      return Scaffold(body: _buildLandscape());
-    }
-    return Scaffold(body: _buildPortrait());
+    return Scaffold(
+      body: MediaQuery.orientationOf(context) == Orientation.landscape
+          ? _buildLandscape()
+          : _buildPortrait(),
+    );
   }
 
+  // Portrait: header navy di atas, form di bawahnya, ajakan di dasar layar
   Widget _buildPortrait() {
     return Container(
-      color: const Color(0xFF1E1A4D),
+      color: AppColors.navy,
       child: Column(
         children: [
           Container(
-            color: const Color(0xFF1E1A4D),
+            color: AppColors.navy,
             child: SafeArea(
               bottom: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
-                child: _buildHeaderContent(),
+                child: _buildHeader(),
               ),
             ),
           ),
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
-                color: Color(0xFFFAF8F3),
+                color: AppColors.background,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: SafeArea(
@@ -106,11 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
                     child: Column(
-                      children: [
-                        _buildForm(),
-                        const Spacer(),
-                        _buildPrompt(),
-                      ],
+                      children: [_buildForm(), const Spacer(), _buildPrompt()],
                     ),
                   ),
                 ),
@@ -122,24 +118,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Landscape: dua kolom, panel navy di kiri dan isi di kanan
+  // Landscape: dua kolom, panel navy di kiri dan form di kanan
   Widget _buildLandscape() {
     return Row(
       children: [
         Expanded(
           child: Container(
-            color: const Color(0xFF1E1A4D),
+            color: AppColors.navy,
             child: SafeArea(
               right: false,
               child: _buildScrollFill(
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
-                    children: [
-                      const Spacer(),
-                      _buildHeaderContent(),
-                      const Spacer(),
-                    ],
+                    children: [const Spacer(), _buildHeader(), const Spacer()],
                   ),
                 ),
               ),
@@ -148,7 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         Expanded(
           child: Container(
-            color: const Color(0xFFFAF8F3),
+            color: AppColors.background,
             child: SafeArea(
               left: false,
               child: _buildScrollFill(
@@ -186,42 +178,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildHeaderContent() {
+  // Logo + judul besar + keterangan singkat
+  Widget _buildHeader() {
     return Column(
       children: [
-        Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE5E5E5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Image.asset('assets/logo_1024.png'),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'bukukuy',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            const Spacer(),
-          ],
-        ),
+        _buildLogo(),
         SizedBox(
           height: MediaQuery.orientationOf(context) == Orientation.landscape
               ? 16
               : 32,
         ),
-        Row(
+        const Row(
           children: [
             Expanded(
               child: Text.rich(
-                const TextSpan(
+                TextSpan(
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -230,18 +201,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     TextSpan(
                       text: 'Buat ',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: AppColors.white),
                     ),
                     TextSpan(
                       text: 'akun',
                       style: TextStyle(
-                        color: Color(0xFFFDBA74),
+                        color: AppColors.accent,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
                     TextSpan(
-                      text: '\nkembali.',
-                      style: TextStyle(color: Colors.white),
+                      text: '\nbaru.',
+                      style: TextStyle(color: AppColors.white),
                     ),
                   ],
                 ),
@@ -250,15 +221,104 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
         ),
         const SizedBox(height: 6),
-        Row(
+        const Row(
           children: [
             Expanded(
               child: Text(
                 'Simpan buku favorit milikmu sendiri',
-                style: TextStyle(color: Color(0xFFC7D2FE), fontSize: 13),
+                style: TextStyle(color: AppColors.blueFaded, fontSize: 13),
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLogo() {
+    return Row(
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: AppColors.border,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Image.asset('assets/logo_1024.png'),
+        ),
+        const SizedBox(width: 8),
+        const Text(
+          'bukukuy',
+          style: TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  // Ajakan di dasar layar: Spacer - Widget - Spacer (tengah horizontal)
+  Widget _buildPrompt() {
+    return Row(
+      children: [
+        const Spacer(),
+        const Text(
+          'Sudah punya akun?',
+          style: TextStyle(color: AppColors.grey, fontSize: 13),
+        ),
+        TextButton(
+          onPressed: _isSubmitting ? null : () => Get.back(),
+          child: const Text(
+            'Masuk',
+            style: TextStyle(
+              color: AppColors.orange,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  // Tombol selebar form, menampilkan spinner saat proses berjalan
+  Widget _buildSubmitButton(String label, VoidCallback onPressed) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed: _isSubmitting ? null : onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.navy,
+              foregroundColor: AppColors.white,
+              disabledBackgroundColor: AppColors.navy.withValues(alpha: 0.6),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: _isSubmitting
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.white,
+                    ),
+                  )
+                : Text(
+                    label,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+          ),
         ),
       ],
     );
@@ -293,7 +353,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _hidePassword
                   ? Icons.visibility_off_outlined
                   : Icons.visibility_outlined,
-              color: const Color(0xFF9E9E9E),
+              color: AppColors.grey,
               size: 20,
             ),
             onPressed: () => setState(() => _hidePassword = !_hidePassword),
@@ -309,66 +369,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           onSubmitted: (_) => _isSubmitting ? null : _register(),
         ),
         const SizedBox(height: 24),
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                onPressed: _isSubmitting ? null : _register,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E1A4D),
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: const Color(
-                    0xFF1E1A4D,
-                  ).withValues(alpha: 0.6),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: _isSubmitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text(
-                        'Daftar',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPrompt() {
-    return Row(
-      children: [
-        const Spacer(),
-        const Text(
-          'Sudah punya akun?',
-          style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
-        ),
-        TextButton(
-          onPressed: _isSubmitting ? null : () => Get.back(),
-          child: const Text(
-            'Masuk',
-            style: TextStyle(
-              color: Color(0xFFF97316),
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            ),
-          ),
-        ),
-        const Spacer(),
+        _buildSubmitButton('Daftar', _register),
       ],
     );
   }

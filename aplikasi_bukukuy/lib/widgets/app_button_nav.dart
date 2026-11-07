@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 // Navbar bawah dua tab: Beranda & Favorit (dibagi dua sama lebar)
 class AppButtonNav extends StatelessWidget {
   final int currentIndex;
@@ -16,7 +18,7 @@ class AppButtonNav extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
+        border: Border(top: BorderSide(color: AppColors.border, width: 1)),
       ),
       child: SafeArea(
         top: false,
@@ -56,7 +58,7 @@ class AppButtonNav extends StatelessWidget {
     required int index,
   }) {
     final isActive = currentIndex == index;
-    final color = isActive ? const Color(0xFF1E1A4D) : const Color(0xFF9E9E9E);
+    final color = isActive ? AppColors.navy : AppColors.grey;
 
     return InkWell(
       onTap: () => onTap(index),

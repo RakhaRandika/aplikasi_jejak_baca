@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class BookCover extends StatelessWidget {
   final String? coverUrl;
   final double width;
@@ -44,7 +46,7 @@ class BookCover extends StatelessWidget {
       Icon(
         Icons.menu_book_rounded,
         size: width * 0.35,
-        color: const Color(0xFFA5B4FC),
+        color: AppColors.iconBlue,
       ),
     );
   }
@@ -56,7 +58,7 @@ class BookCover extends StatelessWidget {
         height: 22,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: Color(0xFFA5B4FC),
+          color: AppColors.iconBlue,
         ),
       ),
     );
@@ -64,7 +66,7 @@ class BookCover extends StatelessWidget {
 
   Widget _buildCentered(Widget child) {
     return Container(
-      color: const Color(0xFF2A2560),
+      color: AppColors.navyLight,
       child: Column(
         children: [
           const Spacer(),

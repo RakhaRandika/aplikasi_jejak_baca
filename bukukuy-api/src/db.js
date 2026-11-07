@@ -6,7 +6,6 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-// Supabase mewajibkan koneksi SSL
 const useSSL = process.env.DB_SSL !== 'false';
 
 const pool = new Pool({

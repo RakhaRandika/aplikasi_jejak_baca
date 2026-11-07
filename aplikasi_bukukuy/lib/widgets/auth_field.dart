@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class AuthField extends StatelessWidget {
   final String label;
   final String hint;
@@ -26,7 +28,7 @@ class AuthField extends StatelessWidget {
   Widget build(BuildContext context) {
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
+      borderSide: const BorderSide(color: AppColors.border),
     );
 
     return Column(
@@ -38,7 +40,7 @@ class AuthField extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF9E9E9E),
+                color: AppColors.grey,
                 letterSpacing: 0.5,
               ),
             ),
@@ -58,7 +60,7 @@ class AuthField extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: hint,
                   hintStyle: const TextStyle(
-                    color: Color(0xFF9E9E9E),
+                    color: AppColors.grey,
                     fontSize: 14,
                   ),
                   filled: true,
@@ -71,7 +73,7 @@ class AuthField extends StatelessWidget {
                   border: border,
                   enabledBorder: border,
                   focusedBorder: border.copyWith(
-                    borderSide: const BorderSide(color: Color(0xFF1E1A4D)),
+                    borderSide: const BorderSide(color: AppColors.navy),
                   ),
                 ),
               ),

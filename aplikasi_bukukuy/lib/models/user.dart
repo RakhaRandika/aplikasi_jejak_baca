@@ -6,8 +6,8 @@ class User {
   User({required this.idUser, required this.nama, required this.email});
 
   factory User.fromJson(Map<String, dynamic> j) => User(
-        idUser: j['id_user'].toString(),
-        nama: (j['nama'] ?? '').toString(),
-        email: (j['email'] ?? '').toString(),
-      );
+    idUser: j['id_user'].toString(),
+    nama: (j['nama'] ?? '').toString(),
+    email: (j['email'] ?? '').toString(),
+  );
 }

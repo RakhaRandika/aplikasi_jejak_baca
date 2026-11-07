@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/book.dart';
 import 'book_cover.dart';
+import '../theme/app_colors.dart';
 
 // Kartu buku untuk grid di Beranda
 class BookCard extends StatelessWidget {
@@ -54,7 +55,7 @@ class BookCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF1E1A4D),
+                            color: AppColors.navy,
                             height: 1.25,
                           ),
                         ),
@@ -73,10 +74,7 @@ class BookCard extends StatelessWidget {
                     book.penulis,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFF9E9E9E),
-                    ),
+                    style: const TextStyle(fontSize: 11, color: AppColors.grey),
                   ),
                 ),
               ],
@@ -99,9 +97,7 @@ class BookCard extends StatelessWidget {
           child: Icon(
             isFavorite ? Icons.favorite : Icons.favorite_border,
             size: 16,
-            color: isFavorite
-                ? const Color(0xFFDC2626)
-                : const Color(0xFF9E9E9E),
+            color: isFavorite ? AppColors.red : AppColors.grey,
           ),
         ),
       ),
