@@ -33,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   LoadState _favState = LoadState.loading;
   String _favError = '';
   List<Book> _favorites = [];
-  // id buku yang sedang dikirim ke server, supaya tap ganda diabaikan
   final Set<String> _pendingFavorites = {};
 
   @override
@@ -54,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (showSpinner) setState(() => _booksState = LoadState.loading);
     try {
       final books = await ApiService.getBooks(search: search);
-      // Abaikan hasil pencarian lama kalau kata kuncinya sudah berubah
       if (!mounted || search != _search) return;
       setState(() {
         _books = books;
@@ -105,7 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isFavorite(Book book) => _favorites.any((f) => f.idBuku == book.idBuku);
 
-  // true = berhasil disimpan ke server
   Future<bool> _toggleFavorite(Book book) async {
     if (_pendingFavorites.contains(book.idBuku)) return false;
     _pendingFavorites.add(book.idBuku);
@@ -220,8 +217,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Header navy: sapaan + nama, tombol keluar, dan kolom cari.
-  // Portrait: dua baris. Landscape: satu baris.
   Widget _buildHeader() {
     if (MediaQuery.orientationOf(context) == Orientation.landscape) {
       return Container(
@@ -409,7 +404,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(children: children);
   }
 
-  // Pesan di tengah area: Spacer - isi - Spacer
   Widget _buildStateMessage(List<Widget> children) {
     return Column(
       children: [

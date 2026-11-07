@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 
-// Navbar bawah dua tab: Beranda & Favorit (dibagi dua sama lebar)
 class AppButtonNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;

@@ -4,7 +4,6 @@ import '../models/book.dart';
 import 'book_cover.dart';
 import '../theme/app_colors.dart';
 
-// Kartu buku untuk grid di Beranda
 class BookCard extends StatelessWidget {
   final Book book;
   final double width;

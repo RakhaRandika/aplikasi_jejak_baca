@@ -64,7 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Portrait: header navy di atas, form di bawahnya, ajakan di dasar layar
   Widget _buildPortrait() {
     return Container(
       color: AppColors.navy,
@@ -104,7 +103,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Landscape: dua kolom, panel navy di kiri dan form di kanan
   Widget _buildLandscape() {
     return Row(
       children: [
@@ -149,8 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Area yang bisa digulir (saat keyboard muncul) tapi tetap memenuhi tinggi layar,
-  // supaya Spacer di dalamnya bekerja
   Widget _buildScrollFill(Widget child) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -164,7 +160,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Logo + judul besar + keterangan singkat
   Widget _buildHeader() {
     return Column(
       children: [
@@ -247,7 +242,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Ajakan di dasar layar: Spacer - Widget - Spacer (tengah horizontal)
   Widget _buildPrompt() {
     return Row(
       children: [
@@ -274,7 +268,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Tombol selebar form, menampilkan spinner saat proses berjalan
   Widget _buildSubmitButton(String label, VoidCallback onPressed) {
     return Row(
       children: [

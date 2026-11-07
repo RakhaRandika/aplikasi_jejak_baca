@@ -198,7 +198,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     );
   }
 
-  // Kotak kecil berisi label dan nilai, contoh: Penerbit / Gramedia
   Widget _buildInfo(String label, String? value) {
     return Container(
       padding: const EdgeInsets.all(12),

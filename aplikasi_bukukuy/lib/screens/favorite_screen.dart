@@ -150,7 +150,6 @@ class FavoriteScreen extends StatelessWidget {
     );
   }
 
-  // Satu baris buku di daftar: cover, judul, penulis, dan tombol hapus
   Widget _buildItem(Book book) {
     return InkWell(
       onTap: () => onOpen(book),
@@ -223,7 +222,6 @@ class FavoriteScreen extends StatelessWidget {
     );
   }
 
-  // Pesan di tengah area: Spacer - isi - Spacer
   Widget _buildStateMessage(List<Widget> children) {
     return Column(
       children: [
