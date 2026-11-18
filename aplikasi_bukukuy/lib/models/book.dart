@@ -1,3 +1,5 @@
+import '../enums/status_baca.dart';
+
 class Book {
   final String idBuku;
   final String judul;
@@ -7,6 +9,8 @@ class Book {
   final String? deskripsi;
   final String? coverUrl;
 
+  final StatusBaca? status;
+
   Book({
     required this.idBuku,
     required this.judul,
@@ -15,6 +19,7 @@ class Book {
     this.tahunTerbit,
     this.deskripsi,
     this.coverUrl,
+    this.status,
   });
 
   factory Book.fromJson(Map<String, dynamic> j) => Book(
@@ -25,5 +30,17 @@ class Book {
     tahunTerbit: j['tahun_terbit']?.toString(),
     deskripsi: j['deskripsi']?.toString(),
     coverUrl: j['cover_url']?.toString(),
+    status: StatusBaca.fromValue(j['status']?.toString()),
+  );
+
+  Book withRak(StatusBaca status) => Book(
+    idBuku: idBuku,
+    judul: judul,
+    penulis: penulis,
+    penerbit: penerbit,
+    tahunTerbit: tahunTerbit,
+    deskripsi: deskripsi,
+    coverUrl: coverUrl,
+    status: status,
   );
 }

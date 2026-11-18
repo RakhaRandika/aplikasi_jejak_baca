@@ -1,6 +1,6 @@
 {
-    "name": "aplikasi_bukukuy",
-    "short_name": "aplikasi_bukukuy",
+    "name": "Jejak Baca",
+    "short_name": "Jejak Baca",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

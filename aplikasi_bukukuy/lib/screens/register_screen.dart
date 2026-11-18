@@ -220,7 +220,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           children: [
             Expanded(
               child: Text(
-                'Simpan buku favorit milikmu sendiri',
+                'Catat perjalanan membacamu sendiri',
                 style: TextStyle(color: AppColors.blueFaded, fontSize: 13),
               ),
             ),
@@ -244,7 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         const SizedBox(width: 8),
         const Text(
-          'bukukuy',
+          'jejak baca',
           style: TextStyle(
             color: AppColors.white,
             fontWeight: FontWeight.bold,

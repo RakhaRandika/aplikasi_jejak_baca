@@ -1,27 +1,42 @@
 import 'package:flutter/material.dart';
 
 import '../enums/load_state.dart';
+import '../enums/status_baca.dart';
 import '../models/book.dart';
 import '../theme/app_colors.dart';
 import '../widgets/book_cover.dart';
 
-class FavoriteScreen extends StatelessWidget {
+class RakScreen extends StatefulWidget {
   final LoadState state;
   final String errorMessage;
-  final List<Book> favorites;
+  final List<Book> rak;
   final VoidCallback onRetry;
   final ValueChanged<Book> onRemove;
   final ValueChanged<Book> onOpen;
 
-  const FavoriteScreen({
+  const RakScreen({
     super.key,
     required this.state,
     required this.errorMessage,
-    required this.favorites,
+    required this.rak,
     required this.onRetry,
     required this.onRemove,
     required this.onOpen,
   });
+
+  @override
+  State<RakScreen> createState() => _RakScreenState();
+}
+
+class _RakScreenState extends State<RakScreen> {
+  StatusBaca? _filter;
+
+  int _count(StatusBaca status) =>
+      widget.rak.where((b) => b.status == status).length;
+
+  List<Book> get _filtered => _filter == null
+      ? widget.rak
+      : widget.rak.where((b) => b.status == _filter).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +54,8 @@ class FavoriteScreen extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    final isReady = state == LoadState.success || state == LoadState.empty;
+    final isReady =
+        widget.state == LoadState.success || widget.state == LoadState.empty;
 
     return Container(
       color: AppColors.navy,
@@ -53,7 +69,7 @@ class FavoriteScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Buku Favorit',
+                      'Rak Bacaku',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -69,8 +85,12 @@ class FavoriteScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       isReady
-                          ? '${favorites.length} buku tersimpan'
-                          : 'Buku yang kamu simpan',
+                          ? '${_count(StatusBaca.selesai)} selesai · '
+                                '${_count(StatusBaca.sedang)} sedang dibaca · '
+                                '${_count(StatusBaca.ingin)} ingin dibaca'
+                          : 'Jejak bacaanmu',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: AppColors.blueFaded,
                         fontSize: 14,
@@ -87,7 +107,7 @@ class FavoriteScreen extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    switch (state) {
+    switch (widget.state) {
       case LoadState.initial:
       case LoadState.loading:
         return _buildStateMessage(const [
@@ -95,10 +115,10 @@ class FavoriteScreen extends StatelessWidget {
         ]);
       case LoadState.empty:
         return _buildStateMessage(const [
-          Icon(Icons.favorite, size: 72, color: AppColors.purpleFaded),
+          Icon(Icons.bookmark, size: 72, color: AppColors.purpleFaded),
           SizedBox(height: 16),
           Text(
-            'Belum ada favorit',
+            'Rak bacamu masih kosong',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -107,24 +127,71 @@ class FavoriteScreen extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
-            'Tekan ikon hati pada buku yang kamu suka untuk menyimpannya di sini',
+            'Tekan ikon penanda pada buku untuk menyimpannya ke rak',
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.grey, fontSize: 14, height: 1.5),
           ),
         ]);
       case LoadState.error:
-        return _buildError(errorMessage, onRetry);
+        return _buildError(widget.errorMessage, widget.onRetry);
       case LoadState.success:
         break;
     }
-    return _buildList();
+
+    return Column(
+      children: [
+        _buildFilterBar(),
+        Expanded(
+          child: _filtered.isEmpty
+              ? _buildStateMessage(const [
+                  Text(
+                    'Belum ada buku dengan status ini',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.grey, fontSize: 14),
+                  ),
+                ])
+              : _buildList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterBar() {
+    final chips = <Widget>[_buildFilterChip(null, 'Semua')];
+    for (final status in StatusBaca.values) {
+      chips.add(const SizedBox(width: 8));
+      chips.add(_buildFilterChip(status, status.label));
+    }
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Row(children: chips),
+    );
+  }
+
+  Widget _buildFilterChip(StatusBaca? status, String label) {
+    final isActive = _filter == status;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isActive,
+      showCheckmark: false,
+      onSelected: (_) => setState(() => _filter = status),
+      selectedColor: AppColors.navy,
+      backgroundColor: AppColors.white,
+      side: const BorderSide(color: AppColors.border),
+      labelStyle: TextStyle(
+        fontSize: 12,
+        color: isActive ? AppColors.white : AppColors.navy,
+      ),
+    );
   }
 
   Widget _buildList() {
+    final books = _filtered;
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = constraints.maxWidth >= 600 ? 2 : 1;
-        final rowCount = (favorites.length / columns).ceil();
+        final rowCount = (books.length / columns).ceil();
 
         return ListView.separated(
           padding: const EdgeInsets.all(16),
@@ -137,8 +204,8 @@ class FavoriteScreen extends StatelessWidget {
               final index = row * columns + col;
               children.add(
                 Expanded(
-                  child: index < favorites.length
-                      ? _buildItem(favorites[index])
+                  child: index < books.length
+                      ? _buildItem(books[index])
                       : const SizedBox(),
                 ),
               );
@@ -152,10 +219,10 @@ class FavoriteScreen extends StatelessWidget {
 
   Widget _buildItem(Book book) {
     return InkWell(
-      onTap: () => onOpen(book),
+      onTap: () => widget.onOpen(book),
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        height: 92,
+        height: 104,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: AppColors.white,
@@ -166,8 +233,8 @@ class FavoriteScreen extends StatelessWidget {
           children: [
             BookCover(
               coverUrl: book.coverUrl,
-              width: 48,
-              height: 70,
+              width: 56,
+              height: 82,
               borderRadius: 8,
             ),
             const SizedBox(width: 12),
@@ -180,7 +247,7 @@ class FavoriteScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           book.judul,
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 14,
@@ -191,7 +258,7 @@ class FavoriteScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Row(
                     children: [
                       Expanded(
@@ -207,16 +274,46 @@ class FavoriteScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      _buildStatusLabel(book.status ?? StatusBaca.ingin),
+                      const Spacer(),
+                    ],
+                  ),
                   const Spacer(),
                 ],
               ),
             ),
             IconButton(
-              tooltip: 'Hapus dari favorit',
-              icon: const Icon(Icons.favorite, color: AppColors.red),
-              onPressed: () => onRemove(book),
+              tooltip: 'Hapus dari rak',
+              icon: const Icon(Icons.bookmark_remove, color: AppColors.grey),
+              onPressed: () => widget.onRemove(book),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusLabel(StatusBaca status) {
+    final color = switch (status) {
+      StatusBaca.ingin => AppColors.grey,
+      StatusBaca.sedang => AppColors.orange,
+      StatusBaca.selesai => AppColors.navy,
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        status.label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
         ),
       ),
     );

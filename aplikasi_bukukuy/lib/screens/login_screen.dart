@@ -230,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(width: 8),
         const Text(
-          'bukukuy',
+          'jejak baca',
           style: TextStyle(
             color: AppColors.white,
             fontWeight: FontWeight.bold,

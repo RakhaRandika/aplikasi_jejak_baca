@@ -37,9 +37,9 @@ class AppButtonNav extends StatelessWidget {
               ),
               Expanded(
                 child: _buildItem(
-                  icon: Icons.favorite_border,
-                  activeIcon: Icons.favorite,
-                  label: 'Favorit',
+                  icon: Icons.bookmark_border,
+                  activeIcon: Icons.bookmark,
+                  label: 'Rak Bacaku',
                   index: 1,
                 ),
               ),

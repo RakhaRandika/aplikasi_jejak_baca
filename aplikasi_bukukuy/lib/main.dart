@@ -17,16 +17,16 @@ Future<void> main() async {
     ),
   );
   await AuthService.restoreSession();
-  runApp(const BukukuyApp());
+  runApp(const JejakBacaApp());
 }
 
-class BukukuyApp extends StatelessWidget {
-  const BukukuyApp({super.key});
+class JejakBacaApp extends StatelessWidget {
+  const JejakBacaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Bukukuy',
+      title: 'Jejak Baca',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.background,

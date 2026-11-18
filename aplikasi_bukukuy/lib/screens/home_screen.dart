@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../enums/load_state.dart';
+import '../enums/status_baca.dart';
 import '../models/book.dart';
 import '../routes/app_routes.dart';
 import '../service/api_service.dart';
@@ -11,7 +12,7 @@ import '../service/auth_service.dart';
 import '../widgets/app_button_nav.dart';
 import '../widgets/book_card.dart';
 import './book_detail_screen.dart';
-import './favorite_screen.dart';
+import './rak_screen.dart';
 import '../theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,16 +31,16 @@ class _HomeScreenState extends State<HomeScreen> {
   String _search = '';
   Timer? _debounce;
 
-  LoadState _favState = LoadState.loading;
-  String _favError = '';
-  List<Book> _favorites = [];
-  final Set<String> _pendingFavorites = {};
+  LoadState _rakState = LoadState.loading;
+  String _rakError = '';
+  List<Book> _rak = [];
+  final Set<String> _pendingRak = {};
 
   @override
   void initState() {
     super.initState();
     _loadBooks();
-    _loadFavorites();
+    _loadRak();
   }
 
   @override
@@ -67,30 +68,30 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _loadFavorites() async {
-    setState(() => _favState = LoadState.loading);
+  Future<void> _loadRak() async {
+    setState(() => _rakState = LoadState.loading);
     try {
-      final favorites = await ApiService.getFavorites();
+      final rak = await ApiService.getRak();
       if (!mounted) return;
       setState(() {
-        _favorites = favorites;
-        _favState = favorites.isEmpty ? LoadState.empty : LoadState.success;
+        _rak = rak;
+        _rakState = rak.isEmpty ? LoadState.empty : LoadState.success;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _favError = e.toString();
-        _favState = LoadState.error;
+        _rakError = e.toString();
+        _rakState = LoadState.error;
       });
     }
   }
 
   Future<void> _refresh() =>
-      Future.wait([_loadBooks(showSpinner: false), _loadFavorites()]);
+      Future.wait([_loadBooks(showSpinner: false), _loadRak()]);
 
   void _retry() {
     _loadBooks();
-    _loadFavorites();
+    _loadRak();
   }
 
   void _onSearchChanged(String value) {
@@ -101,42 +102,82 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  bool _isFavorite(Book book) => _favorites.any((f) => f.idBuku == book.idBuku);
+  bool _isInRak(Book book) => _rakEntry(book) != null;
 
-  Future<bool> _toggleFavorite(Book book) async {
-    if (_pendingFavorites.contains(book.idBuku)) return false;
-    _pendingFavorites.add(book.idBuku);
+  Book? _rakEntry(Book book) {
+    for (final f in _rak) {
+      if (f.idBuku == book.idBuku) return f;
+    }
+    return null;
+  }
 
-    final wasFavorite = _isFavorite(book);
+  void _setRak(List<Book> rak) {
+    _rak = rak;
+    _rakState = rak.isEmpty ? LoadState.empty : LoadState.success;
+  }
+
+  void _showError(Object e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(e.toString()), backgroundColor: AppColors.red),
+      );
+  }
+
+  Future<bool> _toggleRak(Book book) async {
+    if (_pendingRak.contains(book.idBuku)) return false;
+    _pendingRak.add(book.idBuku);
+
+    final wasInRak = _isInRak(book);
     try {
-      if (wasFavorite) {
-        await ApiService.hapusFavorite(book.idBuku);
+      if (wasInRak) {
+        await ApiService.hapusDariRak(book.idBuku);
       } else {
-        await ApiService.tambahFavorite(book.idBuku);
+        await ApiService.tambahKeRak(book.idBuku);
       }
       if (mounted) {
         setState(() {
-          _favorites = wasFavorite
-              ? _favorites.where((f) => f.idBuku != book.idBuku).toList()
-              : [book, ..._favorites];
-          _favState = _favorites.isEmpty ? LoadState.empty : LoadState.success;
+          _setRak(
+            wasInRak
+                ? _rak.where((f) => f.idBuku != book.idBuku).toList()
+                : [book.withRak(StatusBaca.ingin), ..._rak],
+          );
         });
       }
       return true;
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(e.toString()),
-              backgroundColor: AppColors.red,
-            ),
-          );
-      }
+      _showError(e);
       return false;
     } finally {
-      _pendingFavorites.remove(book.idBuku);
+      _pendingRak.remove(book.idBuku);
+    }
+  }
+
+  Future<Book?> _simpanRak(Book book, StatusBaca status) async {
+    final entry = _rakEntry(book);
+    try {
+      if (entry == null) {
+        await ApiService.tambahKeRak(book.idBuku, status: status);
+      } else {
+        await ApiService.ubahRak(book.idBuku, status: status);
+      }
+      final updated = book.withRak(status);
+      if (mounted) {
+        setState(() {
+          _setRak(
+            entry == null
+                ? [updated, ..._rak]
+                : _rak
+                      .map((f) => f.idBuku == book.idBuku ? updated : f)
+                      .toList(),
+          );
+        });
+      }
+      return updated;
+    } catch (e) {
+      _showError(e);
+      return null;
     }
   }
 
@@ -144,8 +185,9 @@ class _HomeScreenState extends State<HomeScreen> {
     Get.to(
       () => BookDetailScreen(
         book: book,
-        isFavorite: _isFavorite(book),
-        onToggleFavorite: _toggleFavorite,
+        rakEntry: _rakEntry(book),
+        onToggleRak: _toggleRak,
+        onSimpanRak: _simpanRak,
       ),
     );
   }
@@ -185,12 +227,12 @@ class _HomeScreenState extends State<HomeScreen> {
           index: _currentIndex,
           children: [
             _buildBeranda(),
-            FavoriteScreen(
-              state: _favState,
-              errorMessage: _favError,
-              favorites: _favorites,
-              onRetry: _loadFavorites,
-              onRemove: _toggleFavorite,
+            RakScreen(
+              state: _rakState,
+              errorMessage: _rakError,
+              rak: _rak,
+              onRetry: _loadRak,
+              onRemove: _toggleRak,
               onOpen: _openDetail,
             ),
           ],
@@ -392,9 +434,9 @@ class _HomeScreenState extends State<HomeScreen> {
           BookCard(
             book: book,
             width: cardWidth,
-            isFavorite: _isFavorite(book),
+            isInRak: _isInRak(book),
             onTap: () => _openDetail(book),
-            onFavoriteTap: () => _toggleFavorite(book),
+            onRakTap: () => _toggleRak(book),
           ),
         );
       } else {

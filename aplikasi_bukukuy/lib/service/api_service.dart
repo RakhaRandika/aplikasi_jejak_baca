@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../enums/status_baca.dart';
 import '../models/book.dart';
 import '../models/user.dart';
 
@@ -76,25 +77,44 @@ class ApiService {
     return _toBooks(data);
   }
 
-  static Future<List<Book>> getFavorites() async {
+  static Future<List<Book>> getRak() async {
     final data = await _send(
       () => http.get(Uri.parse('$baseUrl/favorites'), headers: _headers),
     );
     return _toBooks(data);
   }
 
-  static Future<void> tambahFavorite(String idBuku) async {
+  static Future<void> tambahKeRak(
+    String idBuku, {
+    StatusBaca status = StatusBaca.ingin,
+  }) async {
     await _send(
       () => http.post(
         Uri.parse('$baseUrl/favorites'),
         headers: _headers,
-        body: jsonEncode({'id_buku': int.tryParse(idBuku) ?? idBuku}),
+        body: jsonEncode({
+          'id_buku': int.tryParse(idBuku) ?? idBuku,
+          'status': status.value,
+        }),
       ),
       okStatus: const [409],
     );
   }
 
-  static Future<void> hapusFavorite(String idBuku) async {
+  static Future<void> ubahRak(
+    String idBuku, {
+    required StatusBaca status,
+  }) async {
+    await _send(
+      () => http.patch(
+        Uri.parse('$baseUrl/favorites/buku/$idBuku'),
+        headers: _headers,
+        body: jsonEncode({'status': status.value}),
+      ),
+    );
+  }
+
+  static Future<void> hapusDariRak(String idBuku) async {
     await _send(
       () => http.delete(
         Uri.parse('$baseUrl/favorites/buku/$idBuku'),
