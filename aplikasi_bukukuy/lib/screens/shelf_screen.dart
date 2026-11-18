@@ -1,42 +1,42 @@
 import 'package:flutter/material.dart';
 
 import '../enums/load_state.dart';
-import '../enums/status_baca.dart';
+import '../enums/reading_status.dart';
 import '../models/book.dart';
 import '../theme/app_colors.dart';
 import '../widgets/book_cover.dart';
 
-class RakScreen extends StatefulWidget {
+class ShelfScreen extends StatefulWidget {
   final LoadState state;
   final String errorMessage;
-  final List<Book> rak;
+  final List<Book> shelf;
   final VoidCallback onRetry;
   final ValueChanged<Book> onRemove;
   final ValueChanged<Book> onOpen;
 
-  const RakScreen({
+  const ShelfScreen({
     super.key,
     required this.state,
     required this.errorMessage,
-    required this.rak,
+    required this.shelf,
     required this.onRetry,
     required this.onRemove,
     required this.onOpen,
   });
 
   @override
-  State<RakScreen> createState() => _RakScreenState();
+  State<ShelfScreen> createState() => _ShelfScreenState();
 }
 
-class _RakScreenState extends State<RakScreen> {
-  StatusBaca? _filter;
+class _ShelfScreenState extends State<ShelfScreen> {
+  ReadingStatus? _filter;
 
-  int _count(StatusBaca status) =>
-      widget.rak.where((b) => b.status == status).length;
+  int _count(ReadingStatus status) =>
+      widget.shelf.where((b) => b.status == status).length;
 
   List<Book> get _filtered => _filter == null
-      ? widget.rak
-      : widget.rak.where((b) => b.status == _filter).toList();
+      ? widget.shelf
+      : widget.shelf.where((b) => b.status == _filter).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +85,9 @@ class _RakScreenState extends State<RakScreen> {
                   Expanded(
                     child: Text(
                       isReady
-                          ? '${_count(StatusBaca.selesai)} selesai · '
-                                '${_count(StatusBaca.sedang)} sedang dibaca · '
-                                '${_count(StatusBaca.ingin)} ingin dibaca'
+                          ? '${_count(ReadingStatus.finished)} selesai · '
+                                '${_count(ReadingStatus.reading)} sedang dibaca · '
+                                '${_count(ReadingStatus.wantToRead)} ingin dibaca'
                           : 'Jejak bacaanmu',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -158,7 +158,7 @@ class _RakScreenState extends State<RakScreen> {
 
   Widget _buildFilterBar() {
     final chips = <Widget>[_buildFilterChip(null, 'Semua')];
-    for (final status in StatusBaca.values) {
+    for (final status in ReadingStatus.values) {
       chips.add(const SizedBox(width: 8));
       chips.add(_buildFilterChip(status, status.label));
     }
@@ -169,7 +169,7 @@ class _RakScreenState extends State<RakScreen> {
     );
   }
 
-  Widget _buildFilterChip(StatusBaca? status, String label) {
+  Widget _buildFilterChip(ReadingStatus? status, String label) {
     final isActive = _filter == status;
     return ChoiceChip(
       label: Text(label),
@@ -277,7 +277,9 @@ class _RakScreenState extends State<RakScreen> {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      _buildStatusLabel(book.status ?? StatusBaca.ingin),
+                      _buildStatusLabel(
+                        book.status ?? ReadingStatus.wantToRead,
+                      ),
                       const Spacer(),
                     ],
                   ),
@@ -296,11 +298,11 @@ class _RakScreenState extends State<RakScreen> {
     );
   }
 
-  Widget _buildStatusLabel(StatusBaca status) {
+  Widget _buildStatusLabel(ReadingStatus status) {
     final color = switch (status) {
-      StatusBaca.ingin => AppColors.grey,
-      StatusBaca.sedang => AppColors.orange,
-      StatusBaca.selesai => AppColors.navy,
+      ReadingStatus.wantToRead => AppColors.grey,
+      ReadingStatus.reading => AppColors.orange,
+      ReadingStatus.finished => AppColors.navy,
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

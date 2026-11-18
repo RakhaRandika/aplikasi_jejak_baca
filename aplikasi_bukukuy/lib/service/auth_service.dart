@@ -12,7 +12,7 @@ class AuthService {
 
   static Future<void> login(String email, String password) async {
     final data = await ApiService.login(email, password);
-    await _simpanSesi(data);
+    await _saveSession(data);
   }
 
   static Future<void> register(
@@ -21,7 +21,7 @@ class AuthService {
     String password,
   ) async {
     final data = await ApiService.register(nama, email, password);
-    await _simpanSesi(data);
+    await _saveSession(data);
   }
 
   static Future<void> restoreSession() async {
@@ -48,7 +48,7 @@ class AuthService {
     await prefs.remove(_tokenKey);
   }
 
-  static Future<void> _simpanSesi(Map<String, dynamic> data) async {
+  static Future<void> _saveSession(Map<String, dynamic> data) async {
     final token = data['token'].toString();
     ApiService.token = token;
     currentUser = User.fromJson(Map<String, dynamic>.from(data['user'] as Map));

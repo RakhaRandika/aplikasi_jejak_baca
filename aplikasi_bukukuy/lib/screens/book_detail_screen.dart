@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../enums/status_baca.dart';
+import '../enums/reading_status.dart';
 import '../models/book.dart';
 import '../theme/app_colors.dart';
 import '../widgets/book_cover.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
-  final Book? rakEntry;
-  final Future<bool> Function(Book book) onToggleRak;
-  final Future<Book?> Function(Book book, StatusBaca status) onSimpanRak;
+  final Book? shelfEntry;
+  final Future<bool> Function(Book book) onToggleShelf;
+  final Future<Book?> Function(Book book, ReadingStatus status) onSaveStatus;
 
   const BookDetailScreen({
     super.key,
     required this.book,
-    required this.rakEntry,
-    required this.onToggleRak,
-    required this.onSimpanRak,
+    required this.shelfEntry,
+    required this.onToggleShelf,
+    required this.onSaveStatus,
   });
 
   @override
@@ -25,27 +25,29 @@ class BookDetailScreen extends StatefulWidget {
 }
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
-  late Book? _entry = widget.rakEntry;
+  late Book? _entry = widget.shelfEntry;
   bool _isSaving = false;
 
-  bool get _isInRak => _entry != null;
+  bool get _isInShelf => _entry != null;
 
-  Future<void> _toggleRak() async {
+  Future<void> _toggleShelf() async {
     setState(() => _isSaving = true);
-    final wasInRak = _isInRak;
-    final berhasil = await widget.onToggleRak(widget.book);
+    final wasInShelf = _isInShelf;
+    final succeeded = await widget.onToggleShelf(widget.book);
     if (!mounted) return;
     setState(() {
-      if (berhasil) {
-        _entry = wasInRak ? null : widget.book.withRak(StatusBaca.ingin);
+      if (succeeded) {
+        _entry = wasInShelf
+            ? null
+            : widget.book.withShelf(ReadingStatus.wantToRead);
       }
       _isSaving = false;
     });
   }
 
-  Future<void> _simpan(StatusBaca status) async {
+  Future<void> _saveStatus(ReadingStatus status) async {
     setState(() => _isSaving = true);
-    final updated = await widget.onSimpanRak(widget.book, status);
+    final updated = await widget.onSaveStatus(widget.book, status);
     if (!mounted) return;
     setState(() {
       if (updated != null) _entry = updated;
@@ -154,11 +156,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
         const Spacer(),
         IconButton(
-          tooltip: _isInRak ? 'Hapus dari rak' : 'Simpan ke rak',
-          onPressed: _isSaving ? null : _toggleRak,
+          tooltip: _isInShelf ? 'Hapus dari rak' : 'Simpan ke rak',
+          onPressed: _isSaving ? null : _toggleShelf,
           icon: Icon(
-            _isInRak ? Icons.bookmark : Icons.bookmark_add_outlined,
-            color: _isInRak ? AppColors.accent : Colors.white,
+            _isInShelf ? Icons.bookmark : Icons.bookmark_add_outlined,
+            color: _isInShelf ? AppColors.accent : Colors.white,
           ),
         ),
       ],
@@ -179,15 +181,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             color: AppColors.navy,
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          book.penulis,
-          style: const TextStyle(fontSize: 14, color: AppColors.orange),
-        ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildInfo('Penerbit', book.penerbit)),
+            Expanded(child: _buildInfo('Penulis', book.penulis)),
             const SizedBox(width: 12),
             Expanded(child: _buildInfo('Tahun terbit', book.tahunTerbit)),
           ],
@@ -266,13 +263,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   Widget _buildStatusPicker() {
     final children = <Widget>[];
-    for (final status in StatusBaca.values) {
+    for (final status in ReadingStatus.values) {
       if (children.isNotEmpty) children.add(const SizedBox(width: 8));
       final isActive = _entry?.status == status;
       children.add(
         Expanded(
           child: OutlinedButton(
-            onPressed: _isSaving || isActive ? null : () => _simpan(status),
+            onPressed: _isSaving || isActive ? null : () => _saveStatus(status),
             style: OutlinedButton.styleFrom(
               backgroundColor: isActive ? AppColors.navy : AppColors.white,
               disabledBackgroundColor: isActive

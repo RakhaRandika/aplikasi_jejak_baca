@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../enums/status_baca.dart';
+import '../enums/reading_status.dart';
 import '../models/book.dart';
 import '../models/user.dart';
 
@@ -77,16 +77,16 @@ class ApiService {
     return _toBooks(data);
   }
 
-  static Future<List<Book>> getRak() async {
+  static Future<List<Book>> getShelf() async {
     final data = await _send(
       () => http.get(Uri.parse('$baseUrl/favorites'), headers: _headers),
     );
     return _toBooks(data);
   }
 
-  static Future<void> tambahKeRak(
+  static Future<void> addToShelf(
     String idBuku, {
-    StatusBaca status = StatusBaca.ingin,
+    ReadingStatus status = ReadingStatus.wantToRead,
   }) async {
     await _send(
       () => http.post(
@@ -101,9 +101,9 @@ class ApiService {
     );
   }
 
-  static Future<void> ubahRak(
+  static Future<void> updateShelfStatus(
     String idBuku, {
-    required StatusBaca status,
+    required ReadingStatus status,
   }) async {
     await _send(
       () => http.patch(
@@ -114,7 +114,7 @@ class ApiService {
     );
   }
 
-  static Future<void> hapusDariRak(String idBuku) async {
+  static Future<void> removeFromShelf(String idBuku) async {
     await _send(
       () => http.delete(
         Uri.parse('$baseUrl/favorites/buku/$idBuku'),
@@ -151,8 +151,8 @@ class ApiService {
       body = null;
     }
 
-    final sukses = res.statusCode >= 200 && res.statusCode < 300;
-    if (!sukses && !okStatus.contains(res.statusCode)) {
+    final isSuccess = res.statusCode >= 200 && res.statusCode < 300;
+    if (!isSuccess && !okStatus.contains(res.statusCode)) {
       final message = body is Map ? body['message']?.toString() : null;
       throw ApiException(
         message ?? 'Terjadi kesalahan (${res.statusCode})',

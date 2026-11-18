@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../enums/load_state.dart';
-import '../enums/status_baca.dart';
+import '../enums/reading_status.dart';
 import '../models/book.dart';
 import '../routes/app_routes.dart';
 import '../service/api_service.dart';
@@ -12,7 +12,7 @@ import '../service/auth_service.dart';
 import '../widgets/app_button_nav.dart';
 import '../widgets/book_card.dart';
 import './book_detail_screen.dart';
-import './rak_screen.dart';
+import './shelf_screen.dart';
 import '../theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,16 +31,16 @@ class _HomeScreenState extends State<HomeScreen> {
   String _search = '';
   Timer? _debounce;
 
-  LoadState _rakState = LoadState.loading;
-  String _rakError = '';
-  List<Book> _rak = [];
-  final Set<String> _pendingRak = {};
+  LoadState _shelfState = LoadState.loading;
+  String _shelfError = '';
+  List<Book> _shelf = [];
+  final Set<String> _pendingShelf = {};
 
   @override
   void initState() {
     super.initState();
     _loadBooks();
-    _loadRak();
+    _loadShelf();
   }
 
   @override
@@ -68,30 +68,30 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _loadRak() async {
-    setState(() => _rakState = LoadState.loading);
+  Future<void> _loadShelf() async {
+    setState(() => _shelfState = LoadState.loading);
     try {
-      final rak = await ApiService.getRak();
+      final shelf = await ApiService.getShelf();
       if (!mounted) return;
       setState(() {
-        _rak = rak;
-        _rakState = rak.isEmpty ? LoadState.empty : LoadState.success;
+        _shelf = shelf;
+        _shelfState = shelf.isEmpty ? LoadState.empty : LoadState.success;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _rakError = e.toString();
-        _rakState = LoadState.error;
+        _shelfError = e.toString();
+        _shelfState = LoadState.error;
       });
     }
   }
 
   Future<void> _refresh() =>
-      Future.wait([_loadBooks(showSpinner: false), _loadRak()]);
+      Future.wait([_loadBooks(showSpinner: false), _loadShelf()]);
 
   void _retry() {
     _loadBooks();
-    _loadRak();
+    _loadShelf();
   }
 
   void _onSearchChanged(String value) {
@@ -102,18 +102,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  bool _isInRak(Book book) => _rakEntry(book) != null;
+  bool _isInShelf(Book book) => _shelfEntry(book) != null;
 
-  Book? _rakEntry(Book book) {
-    for (final f in _rak) {
+  Book? _shelfEntry(Book book) {
+    for (final f in _shelf) {
       if (f.idBuku == book.idBuku) return f;
     }
     return null;
   }
 
-  void _setRak(List<Book> rak) {
-    _rak = rak;
-    _rakState = rak.isEmpty ? LoadState.empty : LoadState.success;
+  void _setShelf(List<Book> shelf) {
+    _shelf = shelf;
+    _shelfState = shelf.isEmpty ? LoadState.empty : LoadState.success;
   }
 
   void _showError(Object e) {
@@ -125,23 +125,23 @@ class _HomeScreenState extends State<HomeScreen> {
       );
   }
 
-  Future<bool> _toggleRak(Book book) async {
-    if (_pendingRak.contains(book.idBuku)) return false;
-    _pendingRak.add(book.idBuku);
+  Future<bool> _toggleShelf(Book book) async {
+    if (_pendingShelf.contains(book.idBuku)) return false;
+    _pendingShelf.add(book.idBuku);
 
-    final wasInRak = _isInRak(book);
+    final wasInShelf = _isInShelf(book);
     try {
-      if (wasInRak) {
-        await ApiService.hapusDariRak(book.idBuku);
+      if (wasInShelf) {
+        await ApiService.removeFromShelf(book.idBuku);
       } else {
-        await ApiService.tambahKeRak(book.idBuku);
+        await ApiService.addToShelf(book.idBuku);
       }
       if (mounted) {
         setState(() {
-          _setRak(
-            wasInRak
-                ? _rak.where((f) => f.idBuku != book.idBuku).toList()
-                : [book.withRak(StatusBaca.ingin), ..._rak],
+          _setShelf(
+            wasInShelf
+                ? _shelf.where((f) => f.idBuku != book.idBuku).toList()
+                : [book.withShelf(ReadingStatus.wantToRead), ..._shelf],
           );
         });
       }
@@ -150,25 +150,25 @@ class _HomeScreenState extends State<HomeScreen> {
       _showError(e);
       return false;
     } finally {
-      _pendingRak.remove(book.idBuku);
+      _pendingShelf.remove(book.idBuku);
     }
   }
 
-  Future<Book?> _simpanRak(Book book, StatusBaca status) async {
-    final entry = _rakEntry(book);
+  Future<Book?> _saveStatus(Book book, ReadingStatus status) async {
+    final entry = _shelfEntry(book);
     try {
       if (entry == null) {
-        await ApiService.tambahKeRak(book.idBuku, status: status);
+        await ApiService.addToShelf(book.idBuku, status: status);
       } else {
-        await ApiService.ubahRak(book.idBuku, status: status);
+        await ApiService.updateShelfStatus(book.idBuku, status: status);
       }
-      final updated = book.withRak(status);
+      final updated = book.withShelf(status);
       if (mounted) {
         setState(() {
-          _setRak(
+          _setShelf(
             entry == null
-                ? [updated, ..._rak]
-                : _rak
+                ? [updated, ..._shelf]
+                : _shelf
                       .map((f) => f.idBuku == book.idBuku ? updated : f)
                       .toList(),
           );
@@ -185,15 +185,15 @@ class _HomeScreenState extends State<HomeScreen> {
     Get.to(
       () => BookDetailScreen(
         book: book,
-        rakEntry: _rakEntry(book),
-        onToggleRak: _toggleRak,
-        onSimpanRak: _simpanRak,
+        shelfEntry: _shelfEntry(book),
+        onToggleShelf: _toggleShelf,
+        onSaveStatus: _saveStatus,
       ),
     );
   }
 
   Future<void> _confirmLogout() async {
-    final yakin = await Get.dialog<bool>(
+    final confirmed = await Get.dialog<bool>(
       AlertDialog(
         title: const Text('Keluar dari akun?'),
         content: const Text('Kamu perlu login lagi untuk masuk.'),
@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-    if (yakin != true) return;
+    if (confirmed != true) return;
 
     await AuthService.logout();
     Get.offAllNamed(AppRoutes.login);
@@ -226,13 +226,13 @@ class _HomeScreenState extends State<HomeScreen> {
         body: IndexedStack(
           index: _currentIndex,
           children: [
-            _buildBeranda(),
-            RakScreen(
-              state: _rakState,
-              errorMessage: _rakError,
-              rak: _rak,
-              onRetry: _loadRak,
-              onRemove: _toggleRak,
+            _buildHomeTab(),
+            ShelfScreen(
+              state: _shelfState,
+              errorMessage: _shelfError,
+              shelf: _shelf,
+              onRetry: _loadShelf,
+              onRemove: _toggleShelf,
               onOpen: _openDetail,
             ),
           ],
@@ -245,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildBeranda() {
+  Widget _buildHomeTab() {
     return Column(
       children: [
         _buildHeader(),
@@ -434,9 +434,9 @@ class _HomeScreenState extends State<HomeScreen> {
           BookCard(
             book: book,
             width: cardWidth,
-            isInRak: _isInRak(book),
+            isInShelf: _isInShelf(book),
             onTap: () => _openDetail(book),
-            onRakTap: () => _toggleRak(book),
+            onShelfTap: () => _toggleShelf(book),
           ),
         );
       } else {

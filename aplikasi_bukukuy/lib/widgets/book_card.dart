@@ -7,17 +7,17 @@ import '../theme/app_colors.dart';
 class BookCard extends StatelessWidget {
   final Book book;
   final double width;
-  final bool isInRak;
+  final bool isInShelf;
   final VoidCallback onTap;
-  final VoidCallback onRakTap;
+  final VoidCallback onShelfTap;
 
   const BookCard({
     super.key,
     required this.book,
     required this.width,
-    required this.isInRak,
+    required this.isInShelf,
     required this.onTap,
-    required this.onRakTap,
+    required this.onShelfTap,
   });
 
   @override
@@ -36,7 +36,7 @@ class BookCard extends StatelessWidget {
                   width: width,
                   height: width * 1.45,
                 ),
-                Positioned(top: 6, right: 6, child: _buildRakButton()),
+                Positioned(top: 6, right: 6, child: _buildShelfButton()),
               ],
             ),
             const SizedBox(height: 8),
@@ -84,19 +84,19 @@ class BookCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRakButton() {
+  Widget _buildShelfButton() {
     return Material(
       color: Colors.white,
       shape: const CircleBorder(),
       child: InkWell(
-        onTap: onRakTap,
+        onTap: onShelfTap,
         customBorder: const CircleBorder(),
         child: Padding(
           padding: const EdgeInsets.all(5),
           child: Icon(
-            isInRak ? Icons.bookmark : Icons.bookmark_border,
+            isInShelf ? Icons.bookmark : Icons.bookmark_border,
             size: 16,
-            color: isInRak ? AppColors.orange : AppColors.grey,
+            color: isInShelf ? AppColors.orange : AppColors.grey,
           ),
         ),
       ),

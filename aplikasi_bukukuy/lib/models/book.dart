@@ -1,4 +1,4 @@
-import '../enums/status_baca.dart';
+import '../enums/reading_status.dart';
 
 class Book {
   final String idBuku;
@@ -9,7 +9,7 @@ class Book {
   final String? deskripsi;
   final String? coverUrl;
 
-  final StatusBaca? status;
+  final ReadingStatus? status;
 
   Book({
     required this.idBuku,
@@ -30,10 +30,10 @@ class Book {
     tahunTerbit: j['tahun_terbit']?.toString(),
     deskripsi: j['deskripsi']?.toString(),
     coverUrl: j['cover_url']?.toString(),
-    status: StatusBaca.fromValue(j['status']?.toString()),
+    status: ReadingStatus.fromValue(j['status']?.toString()),
   );
 
-  Book withRak(StatusBaca status) => Book(
+  Book withShelf(ReadingStatus status) => Book(
     idBuku: idBuku,
     judul: judul,
     penulis: penulis,
