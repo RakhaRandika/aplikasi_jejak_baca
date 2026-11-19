@@ -6,10 +6,8 @@ const router = express.Router();
 
 const STATUS = ['ingin_dibaca', 'sedang_dibaca', 'selesai'];
 
-// Semua endpoint jejak baca wajib login; disimpan per akun (req.user.id_user)
 router.use(wajibLogin);
 
-// GET /api/jejak-baca -> jejak baca milik user yang login beserta data bukunya
 router.get('/', async (req, res, next) => {
   try {
     const result = await pool.query(
@@ -27,7 +25,6 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// POST /api/jejak-baca  body: { "id_buku": 1, "status": "ingin_dibaca" } -> tambah ke rak
 router.post('/', async (req, res, next) => {
   try {
     const { id_buku, status = 'ingin_dibaca' } = req.body || {};
@@ -53,7 +50,6 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// DELETE /api/jejak-baca/:id -> hapus berdasarkan id_jejak
 router.delete('/:id', async (req, res, next) => {
   try {
     if (!/^\d+$/.test(req.params.id)) {
@@ -72,7 +68,6 @@ router.delete('/:id', async (req, res, next) => {
   }
 });
 
-// DELETE /api/jejak-baca/buku/:id_buku -> hapus berdasarkan id_buku
 router.delete('/buku/:id_buku', async (req, res, next) => {
   try {
     if (!/^\d+$/.test(req.params.id_buku)) {
@@ -91,7 +86,6 @@ router.delete('/buku/:id_buku', async (req, res, next) => {
   }
 });
 
-// PATCH /api/jejak-baca/buku/:id_buku  body: { "status": "sedang_dibaca" }
 router.patch('/buku/:id_buku', async (req, res, next) => {
   try {
     if (!/^\d+$/.test(req.params.id_buku)) {

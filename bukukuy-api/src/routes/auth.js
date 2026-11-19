@@ -18,12 +18,10 @@ function buatToken(user) {
   });
 }
 
-// Data user yang aman dikirim ke aplikasi (tanpa password)
 function publicUser(user) {
   return { id_user: user.id_user, nama: user.nama, email: user.email };
 }
 
-// Middleware: wajib kirim header "Authorization: Bearer <token>"
 function wajibLogin(req, res, next) {
   const [type, token] = (req.headers.authorization || '').split(' ');
   if (type !== 'Bearer' || !token) {
@@ -37,7 +35,6 @@ function wajibLogin(req, res, next) {
   }
 }
 
-// POST /api/auth/register  body: { "nama", "email", "password" }
 router.post('/register', async (req, res, next) => {
   try {
     const nama = String((req.body || {}).nama ?? '').trim();
@@ -73,7 +70,6 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-// POST /api/auth/login  body: { "email", "password" }
 router.post('/login', async (req, res, next) => {
   try {
     const email = String((req.body || {}).email ?? '').trim().toLowerCase();
@@ -85,7 +81,6 @@ router.post('/login', async (req, res, next) => {
 
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
-    // Pesan disamakan supaya tidak membocorkan email mana yang terdaftar
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ success: false, message: 'Email atau kata sandi salah', data: null });
     }
@@ -100,7 +95,6 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
-// GET /api/auth/me -> data user yang sedang login
 router.get('/me', wajibLogin, async (req, res, next) => {
   try {
     const result = await pool.query('SELECT * FROM users WHERE id_user = $1', [req.user.id_user]);

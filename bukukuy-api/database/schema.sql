@@ -1,4 +1,3 @@
--- Tabel USER (nama "users" karena "user" adalah kata kunci di PostgreSQL)
 CREATE TABLE IF NOT EXISTS users (
   id_user   SERIAL PRIMARY KEY,
   nama      VARCHAR(100) NOT NULL,
@@ -6,7 +5,6 @@ CREATE TABLE IF NOT EXISTS users (
   password  VARCHAR(255) NOT NULL
 );
 
--- Tabel BUKU
 CREATE TABLE IF NOT EXISTS buku (
   id_buku       SERIAL PRIMARY KEY,
   judul         VARCHAR(255) NOT NULL,
@@ -17,7 +15,6 @@ CREATE TABLE IF NOT EXISTS buku (
   cover_url     TEXT
 );
 
--- Database lama: ubah tabel favorites menjadi jejak_baca (data tetap)
 DO $$
 BEGIN
   IF to_regclass('public.favorites') IS NOT NULL
@@ -28,7 +25,6 @@ BEGIN
   END IF;
 END $$;
 
--- Tabel JEJAK_BACA (satu buku -> banyak jejak baca)
 CREATE TABLE IF NOT EXISTS jejak_baca (
   id_jejak           SERIAL PRIMARY KEY,
   id_user            INTEGER NOT NULL REFERENCES users(id_user) ON DELETE CASCADE,
@@ -40,7 +36,6 @@ CREATE TABLE IF NOT EXISTS jejak_baca (
   CONSTRAINT jejak_baca_user_buku_unique UNIQUE (id_user, id_buku)
 );
 
--- Pastikan kolom status ada (aman dijalankan berulang kali)
 ALTER TABLE jejak_baca ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'ingin_dibaca';
 
 ALTER TABLE jejak_baca DROP CONSTRAINT IF EXISTS favorites_status_check;
@@ -48,6 +43,5 @@ ALTER TABLE jejak_baca DROP CONSTRAINT IF EXISTS jejak_baca_status_check;
 ALTER TABLE jejak_baca ADD CONSTRAINT jejak_baca_status_check
   CHECK (status IN ('ingin_dibaca', 'sedang_dibaca', 'selesai'));
 
--- Untuk database lama: hapus kolom yang tidak dipakai lagi.
 ALTER TABLE buku DROP COLUMN IF EXISTS rangkuman;
 ALTER TABLE buku DROP COLUMN IF EXISTS isi;

@@ -9,7 +9,6 @@ function validId(id) {
   return /^\d+$/.test(String(id));
 }
 
-// GET /api/buku?search=kata  -> semua buku (bisa dicari berdasarkan judul/penulis)
 router.get('/', async (req, res, next) => {
   try {
     const search = (req.query.search || '').trim();
@@ -30,7 +29,6 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// GET /api/buku/:id -> detail satu buku
 router.get('/:id', async (req, res, next) => {
   try {
     if (!validId(req.params.id)) {
@@ -46,7 +44,6 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-// POST /api/buku -> tambah buku
 router.post('/', async (req, res, next) => {
   try {
     const { judul, penulis, penerbit, tahun_terbit, deskripsi, cover_url } = req.body || {};
@@ -65,7 +62,6 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// PUT /api/buku/:id -> ubah buku (kirim field yang mau diubah saja)
 router.put('/:id', async (req, res, next) => {
   try {
     if (!validId(req.params.id)) {
@@ -97,7 +93,6 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-// DELETE /api/buku/:id -> hapus buku
 router.delete('/:id', async (req, res, next) => {
   try {
     if (!validId(req.params.id)) {
