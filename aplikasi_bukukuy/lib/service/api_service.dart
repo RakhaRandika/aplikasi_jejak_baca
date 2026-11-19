@@ -79,7 +79,7 @@ class ApiService {
 
   static Future<List<Book>> getShelf() async {
     final data = await _send(
-      () => http.get(Uri.parse('$baseUrl/favorites'), headers: _headers),
+      () => http.get(Uri.parse('$baseUrl/jejak-baca'), headers: _headers),
     );
     return _toBooks(data);
   }
@@ -90,7 +90,7 @@ class ApiService {
   }) async {
     await _send(
       () => http.post(
-        Uri.parse('$baseUrl/favorites'),
+        Uri.parse('$baseUrl/jejak-baca'),
         headers: _headers,
         body: jsonEncode({
           'id_buku': int.tryParse(idBuku) ?? idBuku,
@@ -107,7 +107,7 @@ class ApiService {
   }) async {
     await _send(
       () => http.patch(
-        Uri.parse('$baseUrl/favorites/buku/$idBuku'),
+        Uri.parse('$baseUrl/jejak-baca/buku/$idBuku'),
         headers: _headers,
         body: jsonEncode({'status': status.value}),
       ),
@@ -117,7 +117,7 @@ class ApiService {
   static Future<void> removeFromShelf(String idBuku) async {
     await _send(
       () => http.delete(
-        Uri.parse('$baseUrl/favorites/buku/$idBuku'),
+        Uri.parse('$baseUrl/jejak-baca/buku/$idBuku'),
         headers: _headers,
       ),
       okStatus: const [404],

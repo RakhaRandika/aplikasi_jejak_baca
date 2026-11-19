@@ -17,24 +17,35 @@ CREATE TABLE IF NOT EXISTS buku (
   cover_url     TEXT
 );
 
--- Tabel FAVORITES (satu buku -> banyak favorit)
-CREATE TABLE IF NOT EXISTS favorites (
-  id_favorite        SERIAL PRIMARY KEY,
+-- Database lama: ubah tabel favorites menjadi jejak_baca (data tetap)
+DO $$
+BEGIN
+  IF to_regclass('public.favorites') IS NOT NULL
+     AND to_regclass('public.jejak_baca') IS NULL THEN
+    ALTER TABLE favorites RENAME TO jejak_baca;
+    ALTER TABLE jejak_baca RENAME COLUMN id_favorite TO id_jejak;
+    ALTER TABLE jejak_baca RENAME CONSTRAINT favorites_user_buku_unique TO jejak_baca_user_buku_unique;
+  END IF;
+END $$;
+
+-- Tabel JEJAK_BACA (satu buku -> banyak jejak baca)
+CREATE TABLE IF NOT EXISTS jejak_baca (
+  id_jejak           SERIAL PRIMARY KEY,
   id_user            INTEGER NOT NULL REFERENCES users(id_user) ON DELETE CASCADE,
   id_buku            INTEGER NOT NULL REFERENCES buku(id_buku) ON DELETE CASCADE,
   waktu_ditambahkan  TIMESTAMP NOT NULL DEFAULT NOW(),
   status             VARCHAR(20) NOT NULL DEFAULT 'ingin_dibaca'
                      CHECK (status IN ('ingin_dibaca', 'sedang_dibaca', 'selesai')),
 
-  CONSTRAINT favorites_user_buku_unique UNIQUE (id_user, id_buku)
+  CONSTRAINT jejak_baca_user_buku_unique UNIQUE (id_user, id_buku)
 );
 
--- Untuk database yang sudah punya tabel favorites: tambahkan kolom status baca.
--- Aman dijalankan berulang kali.
-ALTER TABLE favorites ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'ingin_dibaca';
+-- Pastikan kolom status ada (aman dijalankan berulang kali)
+ALTER TABLE jejak_baca ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'ingin_dibaca';
 
-ALTER TABLE favorites DROP CONSTRAINT IF EXISTS favorites_status_check;
-ALTER TABLE favorites ADD CONSTRAINT favorites_status_check
+ALTER TABLE jejak_baca DROP CONSTRAINT IF EXISTS favorites_status_check;
+ALTER TABLE jejak_baca DROP CONSTRAINT IF EXISTS jejak_baca_status_check;
+ALTER TABLE jejak_baca ADD CONSTRAINT jejak_baca_status_check
   CHECK (status IN ('ingin_dibaca', 'sedang_dibaca', 'selesai'));
 
 -- Untuk database lama: hapus kolom yang tidak dipakai lagi.

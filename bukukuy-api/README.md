@@ -7,7 +7,7 @@ REST API buku untuk aplikasi BukuKuy. Dibuat dengan Node.js + Express, database 
 1. Buka https://supabase.com → buat project baru (catat **password database**-nya).
 2. Masuk menu **SQL Editor** → **New query**.
 3. Copy seluruh isi `database/schema.sql` → paste → klik **Run**.
-   Tabel `users`, `buku`, `favorites` dibuat + 4 data buku contoh.
+   Tabel `users`, `buku`, `jejak_baca` dibuat + 4 data buku contoh.
    Mau data lebih banyak? Buka query baru, paste isi `database/seed_100_buku.sql` → **Run** (menambah 100 buku, total 104).
 4. Klik tombol **Connect** di atas dashboard → pilih **Session pooler** → copy **URI**-nya.
 
@@ -62,16 +62,17 @@ Body POST / PUT (JSON):
 
 `judul` dan `penulis` wajib saat POST.
 
-### Favorites
+### Jejak Baca
 
 | Method | URL | Keterangan |
 |---|---|---|
-| GET | `/api/favorites` | Semua favorit + data bukunya |
-| POST | `/api/favorites` | Tambah favorit, body: `{ "id_buku": 1 }` |
-| DELETE | `/api/favorites/:id_favorite` | Hapus favorit berdasarkan id_favorite |
-| DELETE | `/api/favorites/buku/:id_buku` | Hapus favorit berdasarkan id_buku |
+| GET | `/api/jejak-baca` | Semua jejak baca + data bukunya |
+| POST | `/api/jejak-baca` | Tambah buku, body: `{ "id_buku": 1, "status": "ingin_dibaca" }` |
+| PATCH | `/api/jejak-baca/buku/:id_buku` | Ubah status baca, body: `{ "status": "selesai" }` |
+| DELETE | `/api/jejak-baca/:id_jejak` | Hapus berdasarkan id_jejak |
+| DELETE | `/api/jejak-baca/buku/:id_buku` | Hapus berdasarkan id_buku |
 
-Kode status: `200` OK, `201` berhasil dibuat, `400` input salah, `404` tidak ditemukan, `409` buku sudah difavoritkan, `500` error server.
+Kode status: `200` OK, `201` berhasil dibuat, `400` input salah, `404` tidak ditemukan, `409` buku sudah ada di jejak baca, `500` error server.
 
 ## 4. Pakai dari aplikasi Android
 
@@ -120,7 +121,7 @@ bukukuy-api/
 │   ├── db.js              # koneksi ke Supabase
 │   └── routes/
 │       ├── buku.js        # CRUD buku
-│       └── favorites.js   # favorit
+│       └── jejak_baca.js  # jejak baca
 ├── .env.example
 └── package.json
 ```

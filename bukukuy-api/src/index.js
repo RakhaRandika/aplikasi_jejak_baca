@@ -23,7 +23,7 @@ app.get('/api/health', async (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/buku', require('./routes/buku'));
-app.use('/api/favorites', require('./routes/favorites'));
+app.use('/api/jejak-baca', require('./routes/jejak_baca'));
 
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Endpoint tidak ditemukan', data: null });

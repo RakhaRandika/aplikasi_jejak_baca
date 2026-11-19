@@ -1,32 +1,32 @@
--- 20 buku Indonesia yang ada di Open Library (openlibrary.org).
--- Deskripsi: paragraf awal adalah sinopsis dari Open Library (yang berbahasa Inggris
--- diterjemahkan; kutipan pujian tokoh dibuang), lalu ditambah beberapa paragraf tanpa
--- bocoran tentang penulis, tema, dan gaya buku. Cover dari covers.openlibrary.org.
--- Tahun terbit memakai tahun terbit pertama di Indonesia.
+-- 20 buku Indonesia terbitan 2023 ke atas yang ada di Open Library (openlibrary.org).
+-- Deskripsi: paragraf awal adalah sinopsis dari Open Library (hanya dirapikan: bagian promosi
+-- dibuang dan typo hasil scan diperbaiki), lalu ditambah beberapa paragraf tanpa bocoran
+-- tentang penulis, tema, dan gaya buku (sebagian dari riset ulasan di Gramedia, Goodreads,
+-- Detik, dan jurnal kampus). Cover dari covers.openlibrary.org.
 -- Sumber sinopsis per buku:
---   Laskar Pelangi                             : https://openlibrary.org/works/OL15302003W (kutipan pujian dibuang)
---   Cantik Itu Luka                            : https://openlibrary.org/works/OL34965326W (asli)
---   Anjing Mengeong, Kucing Menggonggong       : https://openlibrary.org/works/OL42609631W (asli)
---   Gadis Pantai                               : https://openlibrary.org/works/OL307190W (diterjemahkan)
---   Saman                                      : https://openlibrary.org/works/OL2325374W (diterjemahkan)
---   Seporsi Mie Ayam Sebelum Mati              : https://openlibrary.org/works/OL42830484W (asli)
---   Anak Semua Bangsa                          : https://openlibrary.org/works/OL307178W (diterjemahkan)
---   Jejak Langkah                              : https://openlibrary.org/works/OL307189W (diterjemahkan)
---   Rumah Kaca                                 : https://openlibrary.org/works/OL307195W (diterjemahkan)
---   Teruslah Bodoh Jangan Pintar               : https://openlibrary.org/works/OL37900765W (asli)
---   Bumi                                       : https://openlibrary.org/works/OL23233727W (asli)
---   Pulang                                     : https://openlibrary.org/works/OL28941542W (kutipan pujian dibuang)
---   Rindu                                      : https://openlibrary.org/works/OL23252280W (asli)
---   Negeri Para Bedebah                        : https://openlibrary.org/works/OL23204670W (asli)
---   Tentang Kamu                               : https://openlibrary.org/works/OL36895009W (asli)
---   Hafalan Shalat Delisa                      : https://openlibrary.org/works/OL23997362W (disesuaikan dari bahasa Melayu)
---   Ayahku (Bukan) Pembohong                   : https://openlibrary.org/works/OL22604015W (kutipan pujian dibuang)
---   Rembulan Tenggelam di Wajahmu              : https://openlibrary.org/works/OL11713474W (asli)
---   Daun yang Jatuh Tak Pernah Membenci Angin  : https://openlibrary.org/works/OL22106205W (asli)
---   Rasa                                       : https://openlibrary.org/works/OL36896696W (asli)
+--   Bandung Menjelang Pagi               : https://openlibrary.org/works/OL43313265W (bagian promosi dibuang)
+--   Sisi Tergelap Surga                  : https://openlibrary.org/works/OL43313318W (bagian promosi dibuang)
+--   23:59                                : https://openlibrary.org/works/OL43313462W (asli)
+--   Seporsi Mie Ayam Sebelum Mati        : https://openlibrary.org/works/OL42830484W (asli)
+--   Anjing Mengeong, Kucing Menggonggong : https://openlibrary.org/works/OL42609631W (asli)
+--   Teruslah Bodoh Jangan Pintar         : https://openlibrary.org/works/OL37900765W (asli)
+--   Tanah Para Bandit                    : https://openlibrary.org/works/OL36896697W (asli)
+--   Aldebaran                            : https://openlibrary.org/works/OL43816748W (asli)
+--   Hana-Tara-Hata                       : https://openlibrary.org/works/OL43816784W (asli)
+--   Sendiri                              : https://openlibrary.org/works/OL39364710W (asli)
+--   Sebelas                              : https://openlibrary.org/works/OL43816761W (asli)
+--   Bungkam Suara                        : https://openlibrary.org/works/OL42658163W (asli)
+--   Perkumpulan Anak Luar Nikah          : https://openlibrary.org/works/OL38005386W (asli)
+--   Timun Jelita                         : https://openlibrary.org/works/OL42380281W (typo diperbaiki)
+--   Perempuan Pemanggul Jenazah          : https://openlibrary.org/works/OL43702853W (asli)
+--   Ngomongin Uang                       : https://openlibrary.org/works/OL46093648W (tips membaca umum dibuang)
+--   Yang Kamu Belum Tahu Soal Palestina  : https://openlibrary.org/works/OL38849977W (typo diperbaiki)
+--   Mata Keramat                         : https://openlibrary.org/works/OL43883028W (asli)
+--   Flâneur                              : https://openlibrary.org/works/OL42522190W (asli)
+--   Matahari di Balik Bukit Partisan     : https://openlibrary.org/works/OL43825292W (asli)
 --
--- PERHATIAN: TRUNCATE di bawah menghapus semua buku DAN semua isi rak (favorites)
--- karena favorites mengacu ke buku. Akun (users) tidak terhapus.
+-- PERHATIAN: TRUNCATE di bawah menghapus semua buku DAN semua isi rak (jejak_baca)
+-- karena jejak_baca mengacu ke buku. Akun (users) tidak terhapus.
 
 ALTER TABLE buku ADD COLUMN IF NOT EXISTS cover_url TEXT;
 ALTER TABLE buku DROP COLUMN IF EXISTS rangkuman;
@@ -35,36 +35,64 @@ ALTER TABLE buku DROP COLUMN IF EXISTS isi;
 TRUNCATE TABLE buku RESTART IDENTITY CASCADE;
 
 INSERT INTO buku (judul, penulis, penerbit, tahun_terbit, deskripsi, cover_url) VALUES
-($$Laskar Pelangi$$,
- $$Andrea Hirata$$,
- $$Bentang Pustaka$$,
- $$2005$$,
- $$Begitu banyak hal menakjubkan yang terjadi dalam masa kecil para anggota Laskar Pelangi. Sebelas orang anak Melayu Belitong yang luar biasa ini tak menyerah walau keadaan tak bersimpati pada mereka. Tengoklah Lintang, seorang kuli kopra cilik yang genius dan dengan senang hati bersepeda 80 kilometer pulang pergi untuk memuaskan dahaganya akan ilmu, bahkan terkadang hanya untuk menyanyikan Padamu Negeri di akhir jam sekolah. Atau Mahar, seorang pesuruh tukang parut kelapa sekaligus seniman dadakan yang imajinatif, tak logis, kreatif, dan sering diremehkan sahabat-sahabatnya, namun berhasil mengangkat derajat sekolah kampung mereka dalam karnaval 17 Agustus. Dan juga sembilan orang Laskar Pelangi lain yang begitu bersemangat dalam menjalani hidup dan berjuang meraih cita-cita.
+($$Bandung Menjelang Pagi$$,
+ $$Brian Khrisna$$,
+ $$Mediakita$$,
+ $$2024$$,
+ $$Menjelang pagi, Bandung berubah menjadi kota yang tak lagi sama. Malam terasa sangat panjang dan lebih mencekam dari kelam. Para bandit, pemadat, tukang judi, bocah geng motor, begundal grafiti, semuanya berkeliaran bak tikus-tikus ketika air got meluap. Di kota ini, Dipha adalah bocah berandalan yang mampu mengerjakan apa saja. Berjualan bacang di Asia Afrika, pelayan kafe di Braga, buruh angkut kertas di Pajagalan, ataupun buruh kain di Tamin. Apa pun ia lakukan untuk bertahan hidup. Kemampuannya untuk mengerjakan apa saja itu membawanya bertemu dengan seorang gadis misterius bernama Vinda yang ngotot minta dicarikan tempat tinggal dengan segala syarat yang tak masuk akal. Seperti dipermainkan oleh takdir, satu-satunya tempat yang tersedia adalah kontrakan petak yang terletak tepat di seberang kontrakan Dipha. Mau tidak mau, Vinda akhirnya menempati kontrakan itu. Vinda yang sangat mencintai Bandung begitu bertolak belakang dengan Dipha yang sudah mengenal betapa bobroknya kota itu ketika menjelang pagi. Asia Afrika, Braga, Dago, Kalipah Apo, Astana Anyar, Banceuy, Jalan ABC, dan seluruh jalan-jalan tikus di Kota Bandung menjadi saksi tumbuhnya perasaan di antara keduanya. Namun, sayangnya mereka berdua kerap lupa, bahwa sejatinya, oleh-oleh paling khas dari Kota Bandung adalah: patah hati.
 
-Selami ironisnya kehidupan mereka, kejujuran pemikiran mereka, indahnya petualangan mereka, dan temukan diri Anda tertawa, menangis, dan tersentuh saat membaca setiap lembarnya. Laskar Pelangi ini dipersembahkan buat mereka yang meyakini the magic of childhood memories, dan khususnya juga buat siapa saja yang masih meyakini adanya pintu keajaiban lain untuk mengubah dunia: pendidikan.
+Brian Khrisna adalah penulis asal Bandung. Dalam catatan penulis di salah satu bukunya, ia menyebut karya-karyanya antara lain Merayakan Kehilangan (2016), The Book of Almost (2018), Kudasai (2019), This is Why I Need You (2019), Museum of Broken Heart (2020), Parable (2021), serta 23:59 dan The Matchbreaker (2023).
 
-Laskar Pelangi adalah novel pertama Andrea Hirata, diterbitkan Bentang Pustaka pada tahun 2005. Novel ini terinspirasi dari masa kecil penulisnya di Pulau Belitung, terutama dari pengalamannya bersekolah di sebuah SD Muhammadiyah yang sederhana. Laskar Pelangi menjadi salah satu novel terlaris dalam sejarah sastra Indonesia dan diterjemahkan ke banyak bahasa.
+Bandung Menjelang Pagi diterbitkan Mediakita pada tahun 2024. Sesuai judulnya, novel ini memadukan kisah cinta dengan potret Kota Bandung dari sisi yang jarang terlihat wisatawan: orang-orang yang bekerja serabutan, jalanan malam, dan kehidupan di kontrakan petak. Tempat-tempat terkenal seperti Asia Afrika, Braga, dan Dago menjadi latar yang hidup sepanjang cerita.
 
-Novel ini adalah bagian pertama dari tetralogi yang dilanjutkan dengan Sang Pemimpi, Edensor, dan Maryamah Karpov. Pada tahun 2008, Laskar Pelangi diadaptasi menjadi film yang disutradarai Riri Riza dan ditonton jutaan orang, sehingga semakin banyak pembaca yang mengenal kisah ini.
+Gaya penulisan Brian Khrisna dikenal ringan dan jenaka, dengan dialog sehari-hari yang terasa dekat. Namun di balik humor itu, novel ini juga membicarakan kerasnya hidup orang-orang di pinggiran kota dan kenyataan bahwa tidak semua rencana berjalan sesuai harapan.
 
-Kekuatan novel ini terletak pada caranya memadukan humor, kenangan masa kecil, dan kritik sosial. Di balik cerita tentang persahabatan anak-anak, terdapat gambaran tentang kesenjangan antara kekayaan alam Belitung, terutama timah, dan kemiskinan masyarakatnya. Tokoh guru seperti Bu Mus juga menjadi simbol pengabdian dalam dunia pendidikan.
-
-Bahasanya ringan dan penuh warna lokal Melayu Belitong, sehingga cocok dibaca oleh remaja maupun dewasa. Novel ini sering direkomendasikan bagi siapa saja yang ingin membaca kisah inspiratif tentang pendidikan dan semangat pantang menyerah.$$,
- $$https://covers.openlibrary.org/b/id/7079796-L.jpg$$),
-($$Cantik Itu Luka$$,
- $$Eka Kurniawan$$,
+Buku ini cocok bagi pembaca yang menyukai kisah romansa dengan latar kota yang kuat, terutama mereka yang mengenal atau mencintai Bandung.$$,
+ $$https://covers.openlibrary.org/b/id/15044646-L.jpg$$),
+($$Sisi Tergelap Surga$$,
+ $$Brian Khrisna$$,
  $$Gramedia Pustaka Utama$$,
- $$2002$$,
- $$Di satu sore, seorang perempuan bangkit dari kuburannya setelah dua puluh satu tahun kematian. Kebangkitannya menguak kutukan dan tragedi keluarga, yang terentang sejak akhir masa kolonial, perpaduan antara epik keluarga yang dibalut roman, kisah hantu, kekejaman politik, mitologi, dan petualangan. Dari kekasih yang lenyap ditelan kabut hingga seorang ibu yang menginginkan bayi buruk rupa.
+ $$2023$$,
+ $$Jakarta kerap menjadi pelabuhan bagi mereka yang datang membawa sekoper harapan. Mereka yang siap bertaruh dengan nasibnya sendiri-sendiri. Namun, kota ini selalu mampu melumat habis harapan dan menukarnya dengan keputusasaan. Pemulung, pengamen, pramuria yang menjajakan tubuh agar anaknya bisa makan, pemimpin-pemimpin kecil yang culas, lelaki tua di balik kostum badut ayam, pencuri motor yang ingin membeli obat untuk ibunya, remaja yang melumuri tubuh dengan cat perak, hingga mereka yang bergelut di terminal setelah terpaksa merelakan impiannya habis digerus kejinya ibu kota. Di Jakarta, semua orang dipaksa bergelut dan bertempur demi bisa hidup dari hari ke hari. Dan di kampung inilah semua itu dimulai. Sebuah cerita tentang kehidupan orang-orang yang hidup di sisi tergelap surga kota bernama Jakarta...
 
-Cantik Itu Luka adalah novel pertama Eka Kurniawan, pertama kali terbit pada tahun 2002 dan kemudian diterbitkan ulang oleh Gramedia Pustaka Utama. Novel ini berlatar di sebuah kota fiktif bernama Halimunda dan membentang dari masa kolonial Belanda, pendudukan Jepang, revolusi, hingga masa setelah tahun 1965.
+Dari penulis: 25 tahun hidup sebagai anak penjual nasi di pinggir jalan membuatku akrab dengan hal-hal yang jarang sekali diketahui orang. Tentang pengemis yang memiliki penghasilan lebih besar dari UMR ibu kota, permainan alih kuasa dan perizinan jualan dengan berbagai pihak, hingga tentang pergaulan dan geliat kehidupan mereka yang hidup dari hari ke hari tanpa jaminan masa depan yang pasti. Oleh sebab itu, menulis buku ini rasa-rasanya membawaku kembali pada nostalgia, tentang kehidupan yang rumit tetapi sebenarnya dialami oleh sebagian dari kita. Buku ini kubuat apa adanya, menggambarkan apa yang pernah kulihat, beberapa yang pernah kualami, dan pengalaman-pengalaman teman seperjuangan yang sekarang sudah entah di mana. Kuharap buku ini bisa menjadi sebuah jendela bagi kita untuk melihat kehidupan yang lain namun dekat. Sebuah cerita fiksi tentang bagaimana hebatnya kemampuan manusia untuk tetap bertahan hidup, apa pun situasinya.
 
-Pusat ceritanya adalah Dewi Ayu dan keturunannya. Lewat keluarga ini, Eka menelusuri sejarah Indonesia dengan cara yang tidak biasa, memadukan kenyataan sejarah dengan hal-hal gaib, humor gelap, dan kekerasan. Gaya ini sering dibandingkan dengan realisme magis para penulis Amerika Latin, tetapi akarnya juga kuat dalam cerita rakyat dan wayang Jawa.
+Brian Khrisna adalah penulis asal Bandung. Dalam catatan penulis di salah satu bukunya, ia menyebut karya-karyanya antara lain Merayakan Kehilangan (2016), The Book of Almost (2018), Kudasai (2019), This is Why I Need You (2019), Museum of Broken Heart (2020), Parable (2021), serta 23:59 dan The Matchbreaker (2023).
 
-Novel ini diterjemahkan ke bahasa Inggris dengan judul Beauty Is a Wound dan ke puluhan bahasa lain, sehingga mengangkat nama Eka Kurniawan di dunia sastra internasional. Karya-karyanya yang lain antara lain Lelaki Harimau, Seperti Dendam, Rindu Harus Dibayar Tuntas, dan Anjing Mengeong, Kucing Menggonggong.
+Sisi Tergelap Surga diterbitkan Gramedia Pustaka Utama pada tahun 2023. Berbeda dari banyak karyanya yang bernuansa romansa, novel ini memotret kehidupan orang-orang kecil di sebuah kampung di Jakarta: pemulung, pengamen, pencuri motor, hingga orang-orang yang bertahan hidup dari hari ke hari tanpa jaminan masa depan.
 
-Karena memuat kekerasan dan adegan dewasa yang cukup eksplisit, novel ini lebih cocok untuk pembaca dewasa. Bagi pembaca yang menyukai sastra dengan sejarah, mitos, dan satire yang berlapis, buku ini termasuk bacaan penting dalam sastra Indonesia modern.$$,
- $$https://covers.openlibrary.org/b/id/13903116-L.jpg$$),
+Seperti yang ia ceritakan sendiri, penulis tumbuh sebagai anak penjual nasi di pinggir jalan, sehingga banyak gambaran dalam novel ini berangkat dari pengamatan dan pengalaman nyata. Hal ini membuat ceritanya terasa jujur dan dekat dengan kenyataan.
+
+Tema utama buku ini adalah ketahanan manusia dalam menghadapi kemiskinan dan ketidakadilan kota besar. Buku ini cocok bagi pembaca yang menyukai fiksi realis tentang kehidupan urban dan orang-orang yang jarang mendapat sorotan.$$,
+ $$https://covers.openlibrary.org/b/id/15044690-L.jpg$$),
+($$23:59$$,
+ $$Brian Khrisna$$,
+ $$Kawah Media$$,
+ $$2023$$,
+ $$Tidak ada yang lebih menyakitkan ketimbang hubungan yang berakhir dengan penuh tanda tanya. Ketika kamu harus dipaksa ikhlas atas perpisahan yang terjadi tanpa kamu tahu apa yang salah dari hubunganmu kemarin. Lalu, kamu akan melewati hari demi hari dengan terus menyalahkan diri sendiri. Apa kurangku? Apakah dia tidak bahagia bersamaku? Apakah aku tidak cukup untuknya? Itulah perasaan yang selama ini Ami derita. Seorang gadis cantik yang dipaksa harus merelakan hubungannya bersama Raga berakhir, tanpa ada sedikitpun penjelasan yang dia dapatkan. Trauma, depresi, kantung mata, rambut rontok, dan segala macam obat tidur harus dilaluinya pasca perpisahan terkutuk itu. Meski sulit, perjalanan penuh luka itu akhirnya membawanya ditemukan oleh seseorang yang baru. Yang lebih mencintainya. Yang tak pernah sekali pun pergi meninggalkannya. Ami perlahan mulai bisa mengikhlaskan Raga. Namun, dua hari sebelum pernikahannya, Raga-lelaki yang selama ini diam-diam masih dicintainya-tiba-tiba hadir di keadaan yang benar-benar membuat Ami merasa hampir setengah gila. Seketika itu juga, semua usaha Ami untuk akhirnya bisa ikhlas, tiba-tiba sirna begitu saja. Apakah pada akhirnya Ami berhasil menemukan jawaban atas segala pertanyaannya selama ini? Lantas, apakah Ami akan kembali bersama Raga, lelaki yang sudah melukainya teramat dalam, namun juga masih menjadi segala doa yang kerap ia layangkan dalam diam?
+
+Brian Khrisna adalah penulis asal Bandung. Dalam catatan penulis di salah satu bukunya, ia menyebut karya-karyanya antara lain Merayakan Kehilangan (2016), The Book of Almost (2018), Kudasai (2019), This is Why I Need You (2019), Museum of Broken Heart (2020), Parable (2021), serta 23:59 dan The Matchbreaker (2023).
+
+23:59 terbit pada tahun 2023 melalui Kawah Media. Novel ini berfokus pada perasaan seseorang yang ditinggalkan tanpa penjelasan, dan bagaimana luka itu terus membayangi bahkan ketika hidup sudah mulai bergerak maju.
+
+Tema yang diangkat dekat dengan banyak pembaca muda: patah hati, trauma setelah putus, kebiasaan menyalahkan diri sendiri, dan keraguan ketika masa lalu kembali di saat yang paling tidak tepat. Brian Khrisna menuliskannya dengan bahasa yang lugas dan emosional.
+
+Buku ini cocok bagi pembaca yang menyukai novel romansa dengan konflik batin yang kuat dan pertanyaan tentang ikhlas, memaafkan, dan memilih.$$,
+ $$https://covers.openlibrary.org/b/id/15044823-L.jpg$$),
+($$Seporsi Mie Ayam Sebelum Mati$$,
+ $$Brian Khrisna$$,
+ $$Gramedia Widiasarana Indonesia$$,
+ $$2025$$,
+ $$Ale, seorang pria berusia 37 tahun memiliki tinggi badan 189 cm dan berat 138 kg. Badannya bongsor, berkulit hitam, dan memiliki masalah dengan bau badan. Sejak kecil, Ale hidup di lingkungan keluarga yang tidak mendukungnya. Ia tak memiliki teman dekat dan menjadi korban perundungan di sekolahnya. Ale didiagnosis psikiaternya mengalami depresi akut. Bukannya Ale tidak peduli untuk memperbaiki dirinya sendiri, ia peduli. Ale telah berusaha mengatasi masalah-masalah yang timbul dari dirinya agar ia diterima di lingkungan pertemanan. Namun usahanya tidak pernah berhasil. Bahkan keluarganya pun tidak mendukungnya saat Ale membutuhkan sandaran dan dukungan. Atas itu semua, Ale memutuskan untuk mati. Ia mempersiapkan kematiannya dengan baik. Agar ketika mati pun, Ale tidak banyak merepotkan orang. Dua puluh empat jam dari sekarang, ia akan menelan obat antidepresan yang dia punya sekaligus. Sebelum waktu itu tiba, Ale membersihkan apartemennya yang berantakan, makan makanan mahal yang tak pernah ia beli, pergi berkaraoke dan menyanyi sepuasnya hingga mabuk. Saat 24 jam itu tiba, Ale telah bersiap dengan kemeja hitam dan celana hitam, bak baju melayat ke pemakamannya sendiri. Ia kenakan topi kecurut ulang tahun dan meletuskan konfeti yang ia beli untuk dirinya sendiri. “Selamat ulang tahun yang terakhir, Ale.” Ale siap menenggak seluruh obat antidepresan yang ia punya. Saat ia memain-mainkan botolnya, Ale terdiam saat membaca anjuran di kemasan botol itu, dikonsumsi sesudah makan. Seketika perutnya berbunyi. Dan Ale pun memutuskan untuk makan dulu sebelum mengakhiri hidupnya. Setidaknya, itu akan menjadi satu-satunya keputusan yang bisa dia ambil atas kehendaknya sendiri. Setelah selama hidupnya ia tak pernah mampu melakukan hal-hal yang ia inginkan. Ale akan makan seporsi mie ayam sebelum mati.
+
+Seporsi Mie Ayam Sebelum Mati adalah novel karya Brian Khrisna yang diterbitkan Gramedia Widiasarana Indonesia. Penulisnya berasal dari Bandung dan lahir pada 17 Januari 1992. Sebelum buku ini, ia sudah menulis antara lain Sisi Tergelap Surga dan Bandung Menjelang Pagi. Novel ini kemudian menjadi perbincangan luas karena dibaca sebagai cerita tentang kesehatan mental yang disampaikan dengan gaya yang ringan.
+
+Ulasan yang membahas buku ini menyebut nada penulisannya ringan, jenaka, dan satir, ciri khas Brian Khrisna, meski kali ini dengan kedalaman yang berbeda dari karya-karyanya sebelumnya. Kombinasi humor dan tema yang gelap inilah yang membuat banyak pembaca merasa buku ini dekat dengan pengalaman sehari-hari, terutama bagi mereka yang pernah merasa tidak terlihat atau tidak cukup baik.
+
+Novel ini juga sudah diumumkan akan diadaptasi menjadi film, sehingga banyak orang yang ingin membaca versi bukunya terlebih dahulu.
+
+Karena temanya menyentuh isu bunuh diri dan harga diri yang rendah, buku ini sebaiknya dibaca dengan hati-hati dan bukan pengganti bantuan profesional. Bila kamu atau orang di sekitarmu sedang berada di titik yang berat, mencari bantuan dari tenaga kesehatan jiwa atau orang yang dipercaya adalah langkah yang penting.$$,
+ $$https://covers.openlibrary.org/b/id/15268683-L.jpg$$),
 ($$Anjing Mengeong, Kucing Menggonggong$$,
  $$Eka Kurniawan$$,
  $$Gramedia Pustaka Utama$$,
@@ -81,96 +109,6 @@ Seperti karya-karya Eka sebelumnya, tulisannya memadukan realitas dengan unsur y
 
 Beberapa ulasan menyebut karya ini lebih tenang dan lebih padat dibanding karya-karya epiknya. Kamu tidak perlu membaca buku-bukunya yang lain untuk menikmatinya, tetapi pembaca yang sudah mengenal gaya Eka mungkin akan menangkap lebih banyak lapisan makna.$$,
  $$https://covers.openlibrary.org/b/id/14846599-L.jpg$$),
-($$Gadis Pantai$$,
- $$Pramoedya Ananta Toer$$,
- $$Hasta Mitra$$,
- $$1987$$,
- $$Di sebuah kampung nelayan miskin di pesisir, seorang gadis cantik tanpa sadar menarik perhatian seorang bangsawan setempat. Sebelum ia sempat memahami apa yang terjadi, ia dipaksa menikah dengan laki-laki yang belum pernah ia lihat dan meninggalkan semua yang akrab baginya: hari-hari tanpa beban membantu ibunya mengerjakan tugas sehari-hari, melamun mendengarkan suara angin dan ombak, dan memandangi perahu-perahu yang datang dan pergi. Ia dibawa ke rumah besar suaminya di kota dan dicemplungkan ke dalam dunia asing yang penuh kemewahan sekaligus kekakuan yang sunyi.
-
-Perlahan Gadis Pantai mulai terbiasa dengan aturan rumah tangga itu, tetapi semakin lama ia semakin dihantui keraguan. Ke mana suaminya pergi berhari-hari? Apa yang sebenarnya ia pikirkan tentang dirinya? Mengapa semua orang begitu takut kepadanya? Terlalu malu untuk menanyakan hal-hal itu langsung kepada suaminya, ia berulang kali berpaling kepada pelayan perempuan yang ditugaskan untuknya, dan dari percakapan dengan perempuan yang lebih tua itulah sang gadis mulai memahami kebenaran tentang hidup barunya.
-
-Yang menyusul adalah kisah perjalanan seorang perempuan muda menempuh jalan yang sepi dan menyakitkan menuju kedewasaan. Di sepanjang jalan, ia berhadapan dengan kenyataan pahit sebuah masyarakat tempat perempuan tak lebih dari barang milik, masyarakat yang terdiri dari mereka yang memberi perintah dan mereka yang menjalankannya.
-
-Gadis Pantai adalah novel karya Pramoedya Ananta Toer, salah satu sastrawan terbesar Indonesia. Novel ini terbit dalam bentuk buku pada tahun 1987, meskipun pernah dimuat sebagai cerita bersambung jauh sebelumnya. Novel ini terinspirasi dari kisah nenek Pramoedya sendiri dan direncanakan sebagai bagian pertama dari sebuah trilogi, tetapi naskah lanjutannya hilang.
-
-Lewat kisah seorang gadis dari kampung nelayan yang dinikahkan dengan seorang priyayi, Pramoedya mengkritik sistem feodal Jawa yang menempatkan perempuan dan rakyat kecil di posisi yang lemah. Kontras antara kehidupan pesisir yang sederhana dan kehidupan bangsawan yang penuh aturan menjadi inti cerita.
-
-Pramoedya menulis dengan bahasa yang lugas namun penuh empati terhadap tokoh-tokohnya. Novel ini relatif pendek dibandingkan karya-karya besarnya yang lain, sehingga sering menjadi pintu masuk yang baik bagi pembaca yang ingin mengenal karya Pramoedya.
-
-Buku ini cocok bagi pembaca yang tertarik pada sastra Indonesia klasik, sejarah sosial Jawa, dan kisah tentang perjuangan perempuan.$$,
- $$https://covers.openlibrary.org/b/id/13810472-L.jpg$$),
-($$Saman$$,
- $$Ayu Utami$$,
- $$Kepustakaan Populer Gramedia$$,
- $$1998$$,
- $$Saman adalah kisah yang disaring melalui kehidupan para tokoh perempuannya yang berani dan sosok "pahlawan" yang penuh teka-teki, Saman. Novel ini sekaligus membongkar penindasan terhadap buruh perkebunan di Sumatra Selatan, menjadi pencarian liris untuk memahami tempat agama dan spiritualitas dalam kehidupan masa kini, menjelajahi seksualitas perempuan dengan jenaka, dan bercerita tentang cinta dalam berbagai wujudnya, sambil menyentuh berbagai hal yang dianggap tabu di Indonesia: seks di luar nikah, represi politik, dan hubungan antara umat Kristen dan Muslim.
-
-Saman adalah novel pertama Ayu Utami yang diterbitkan Kepustakaan Populer Gramedia pada tahun 1998. Novel ini memenangkan sayembara penulisan roman Dewan Kesenian Jakarta tahun 1998 dan terbit pada masa yang sangat penting, menjelang dan sekitar jatuhnya Orde Baru.
-
-Saman dianggap sebagai salah satu karya yang membuka babak baru dalam sastra Indonesia, karena keberaniannya membicarakan politik, agama, dan seksualitas dari sudut pandang perempuan. Novel ini kemudian dilanjutkan dengan Larung pada tahun 2001.
-
-Struktur ceritanya tidak linear. Kisah berpindah-pindah antara beberapa tokoh, tempat, dan waktu, termasuk New York dan perkebunan di Sumatra. Gaya bahasanya puitis dan padat, sehingga membutuhkan perhatian lebih saat membaca.
-
-Karena tema dan adegannya yang dewasa, buku ini lebih cocok untuk pembaca dewasa. Bagi peminat sastra Indonesia, Saman adalah bacaan penting untuk memahami perkembangan sastra setelah tahun 1998.$$,
- $$https://covers.openlibrary.org/b/id/1054753-L.jpg$$),
-($$Seporsi Mie Ayam Sebelum Mati$$,
- $$Brian Khrisna$$,
- $$Gramedia Widiasarana Indonesia$$,
- $$2025$$,
- $$Ale, seorang pria berusia 37 tahun memiliki tinggi badan 189 cm dan berat 138 kg. Badannya bongsor, berkulit hitam, dan memiliki masalah dengan bau badan. Sejak kecil, Ale hidup di lingkungan keluarga yang tidak mendukungnya. Ia tak memiliki teman dekat dan menjadi korban perundungan di sekolahnya. Ale didiagnosis psikiaternya mengalami depresi akut. Bukannya Ale tidak peduli untuk memperbaiki dirinya sendiri, ia peduli. Ale telah berusaha mengatasi masalah-masalah yang timbul dari dirinya agar ia diterima di lingkungan pertemanan. Namun usahanya tidak pernah berhasil. Bahkan keluarganya pun tidak mendukungnya saat Ale membutuhkan sandaran dan dukungan. Atas itu semua, Ale memutuskan untuk mati. Ia mempersiapkan kematiannya dengan baik. Agar ketika mati pun, Ale tidak banyak merepotkan orang. Dua puluh empat jam dari sekarang, ia akan menelan obat antidepresan yang dia punya sekaligus. Sebelum waktu itu tiba, Ale membersihkan apartemennya yang berantakan, makan makanan mahal yang tak pernah ia beli, pergi berkaraoke dan menyanyi sepuasnya hingga mabuk. Saat 24 jam itu tiba, Ale telah bersiap dengan kemeja hitam dan celana hitam, bak baju melayat ke pemakamannya sendiri. Ia kenakan topi kecurut ulang tahun dan meletuskan konfeti yang ia beli untuk dirinya sendiri. “Selamat ulang tahun yang terakhir, Ale.” Ale siap menenggak seluruh obat antidepresan yang ia punya. Saat ia memain-mainkan botolnya, Ale terdiam saat membaca anjuran di kemasan botol itu, dikonsumsi sesudah makan. Seketika perutnya berbunyi. Dan Ale pun memutuskan untuk makan dulu sebelum mengakhiri hidupnya. Setidaknya, itu akan menjadi satu-satunya keputusan yang bisa dia ambil atas kehendaknya sendiri. Setelah selama hidupnya ia tak pernah mampu melakukan hal-hal yang ia inginkan. Ale akan makan seporsi mie ayam sebelum mati.
-
-Seporsi Mie Ayam Sebelum Mati adalah novel karya Brian Khrisna yang diterbitkan Gramedia Widiasarana Indonesia. Penulisnya berasal dari Bandung dan lahir pada 17 Januari 1992. Sebelum buku ini, ia sudah menulis antara lain Sisi Tergelap Surga dan Bandung Menjelang Pagi. Novel ini kemudian menjadi perbincangan luas karena dibaca sebagai cerita tentang kesehatan mental yang disampaikan dengan gaya yang ringan.
-
-Ulasan yang membahas buku ini menyebut nada penulisannya ringan, jenaka, dan satir, ciri khas Brian Khrisna, meski kali ini dengan kedalaman yang berbeda dari karya-karyanya sebelumnya. Kombinasi humor dan tema yang gelap inilah yang membuat banyak pembaca merasa buku ini dekat dengan pengalaman sehari-hari, terutama bagi mereka yang pernah merasa tidak terlihat atau tidak cukup baik.
-
-Novel ini juga sudah diumumkan akan diadaptasi menjadi film, sehingga banyak orang yang ingin membaca versi bukunya terlebih dahulu.
-
-Karena temanya menyentuh isu bunuh diri dan harga diri yang rendah, buku ini sebaiknya dibaca dengan hati-hati dan bukan pengganti bantuan profesional. Bila kamu atau orang di sekitarmu sedang berada di titik yang berat, mencari bantuan dari tenaga kesehatan jiwa atau orang yang dipercaya adalah langkah yang penting.$$,
- $$https://covers.openlibrary.org/b/id/15268683-L.jpg$$),
-($$Anak Semua Bangsa$$,
- $$Pramoedya Ananta Toer$$,
- $$Hasta Mitra$$,
- $$1980$$,
- $$Bergulat dengan penindasan dan ketidakadilan rezim Eropa di negerinya, Minke, penulis Jawa berpendidikan Belanda, berjuang menyuarakan dirinya dan suara bangsanya. Namun di setiap langkah ia dihadang oleh kebusukan orang-orang yang ia percayai dan oleh tragedi yang menimpa orang-orang yang paling ia cintai.
-
-Anak Semua Bangsa adalah buku kedua dari Tetralogi Buru karya Pramoedya Ananta Toer, setelah Bumi Manusia. Novel ini diterbitkan Hasta Mitra pada tahun 1980. Seluruh tetralogi ini disusun Pramoedya ketika ia menjadi tahanan politik di Pulau Buru, awalnya dituturkan secara lisan kepada sesama tahanan sebelum akhirnya ditulis.
-
-Tokoh utamanya, Minke, terinspirasi dari tokoh pers nasional Tirto Adhi Soerjo. Dalam buku ini Minke semakin menyadari ketidakadilan sistem kolonial dan mulai melihat bahwa perjuangannya terkait dengan nasib banyak bangsa terjajah lain, sesuai judulnya.
-
-Tetralogi Buru sempat dilarang beredar pada masa Orde Baru, sehingga banyak pembaca membacanya secara sembunyi-sembunyi. Kini karya ini diakui sebagai salah satu puncak sastra Indonesia dan telah diterjemahkan ke banyak bahasa.
-
-Pembaca disarankan membaca Bumi Manusia terlebih dahulu agar memahami latar dan hubungan antartokoh. Buku ini cocok bagi pembaca yang tertarik pada sejarah pergerakan nasional dan sastra Indonesia klasik.$$,
- $$https://covers.openlibrary.org/b/id/6635926-L.jpg$$),
-($$Jejak Langkah$$,
- $$Pramoedya Ananta Toer$$,
- $$Hasta Mitra$$,
- $$1985$$,
- $$Melanjutkan petualangan Minke, wartawan berpendidikan Belanda, ketika ia dan negerinya memasuki abad kedua puluh. Menetap di kota baru untuk memulai sekolah kedokteran, Minke bertekad meninggalkan tragedi masa lalunya. Namun sekali lagi laki-laki yang cerdas dan berbelas kasih ini terseret dalam ketidakadilan eksploitasi kolonial. Saat ia berjuang bukan hanya untuk memahami dunianya, tetapi juga untuk mengubahnya, Minke memulai pengembaraan pribadi untuk menemukan jati diri yang membawanya melintasi dunia Hindia Belanda yang penuh warna dan bergejolak.
-
-Jejak Langkah adalah buku ketiga dari Tetralogi Buru karya Pramoedya Ananta Toer, diterbitkan Hasta Mitra pada tahun 1985. Buku ini melanjutkan kisah Minke setelah Bumi Manusia dan Anak Semua Bangsa.
-
-Jika dua buku sebelumnya banyak berfokus pada kesadaran pribadi Minke, Jejak Langkah memperlihatkan bagaimana ia mulai bergerak: menulis, mendirikan surat kabar, dan berorganisasi. Buku ini menggambarkan masa awal kebangkitan nasional, ketika pers dan organisasi menjadi alat perjuangan baru melawan penjajahan.
-
-Pramoedya menghadirkan banyak tokoh dan peristiwa yang terinspirasi dari sejarah pergerakan di awal abad kedua puluh. Karena itu, novel ini juga bisa dibaca sebagai cara memahami suasana zaman ketika gagasan tentang bangsa Indonesia mulai tumbuh.
-
-Buku ini sebaiknya dibaca setelah dua buku sebelumnya. Cocok bagi pembaca yang menyukai fiksi sejarah dan ingin memahami akar pergerakan nasional Indonesia.$$,
- $$https://covers.openlibrary.org/b/id/99404-L.jpg$$),
-($$Rumah Kaca$$,
- $$Pramoedya Ananta Toer$$,
- $$Hasta Mitra$$,
- $$1988$$,
- $$Rumah Kaca adalah bab terakhir dari tetralogi epik Pramoedya, berlatar di Hindia Belanda pada pergantian abad. Sebuah novel tentang kepahlawanan, gairah, dan pengkhianatan, buku ini menjadi penutup yang luar biasa bagi sebuah seri yang dipuji sebagai salah satu karya besar sastra modern.
-
-Di awal Rumah Kaca, Minke, penulis dan pemimpin gerakan perlawanan, kini dipenjara, dan penceritaan beralih kepada Pangemanann, mantan polisi yang bertugas memata-matai dan melaporkan orang-orang yang terus memperjuangkan kemerdekaan. Namun sang pemburu mulai menjadi yang diburu. Pangemanann menjadi korban hati nuraninya sendiri dan mulai mengagumi lawan-lawannya. Ia harus memutuskan apakah hukum ada untuk melindungi hak rakyat atau untuk mengendalikan rakyat. Ia takut kehilangan kedudukan, keluarga, dan harga dirinya. Akhirnya Pangemanann menyadari bahwa lawannya yang sesungguhnya bukanlah Minke dan para pengikutnya, melainkan daya hidup dan semangat sebuah masyarakat yang telah terbangun.
-
-Rumah Kaca adalah buku keempat sekaligus penutup Tetralogi Buru karya Pramoedya Ananta Toer, diterbitkan Hasta Mitra pada tahun 1988. Seperti tiga buku sebelumnya, Rumah Kaca disusun Pramoedya selama masa penahanannya di Pulau Buru.
-
-Yang membuat buku ini berbeda adalah sudut pandangnya. Jika tiga buku sebelumnya dituturkan oleh Minke, buku ini dituturkan oleh Pangemanann, seorang pejabat yang bertugas mengawasi para aktivis pergerakan. Judulnya merujuk pada cara pemerintah kolonial mengawasi rakyatnya seakan-akan mereka berada di dalam rumah kaca.
-
-Perubahan sudut pandang ini memberi gambaran tentang cara kerja kekuasaan dari dalam, termasuk dilema moral orang-orang yang menjalankannya. Banyak pembaca menganggap buku ini sebagai bagian paling reflektif dari tetralogi tersebut.
-
-Buku ini sebaiknya dibaca setelah tiga buku sebelumnya. Cocok bagi pembaca yang ingin menuntaskan Tetralogi Buru dan tertarik pada tema kekuasaan, pengawasan, dan hati nurani.$$,
- $$https://covers.openlibrary.org/b/id/99417-L.jpg$$),
 ($$Teruslah Bodoh Jangan Pintar$$,
  $$Tere Liye$$,
  $$Sabak Grip Nusantara$$,
@@ -183,151 +121,217 @@ Novel ini termasuk dalam kelompok karya Tere Liye yang bernada kritik sosial. Se
 
 Tema-tema seperti keadilan, keserakahan, kerusakan akibat penyalahgunaan kekuasaan, dan keberanian untuk bersuara sudah sering muncul dalam karya Tere Liye lainnya, misalnya Negeri Para Bedebah dan Negeri di Ujung Tanduk. Pembaca yang menyukai karya-karya tersebut kemungkinan akan menemukan semangat yang serupa di sini.
 
-Seperti umumnya buku Tere Liye, novel ini ditulis dengan bahasa yang lugas dan mudah diikuti, sehingga cocok bagi pembaca remaja maupun dewasa. Buku ini cocok bagi pembaca yang menyukai fiksi Indonesia dengan pesan sosial yang kuat dan ingin merenungkan keadaan di sekitar mereka.$$,
+Seperti umumnya buku Tere Liye, novel ini ditulis dengan bahasa yang lugas dan mudah diikuti, sehingga cocok bagi pembaca remaja maupun dewasa. Buku ini cocok bagi pembaca yang menyukai fiksi Indonesia dengan pesan sosial yang kuat dan ingin merenungkan keadaan di sekitar mereka.
+
+Menurut kajian akademik yang membahas novel ini, ceritanya mengikuti enam aktivis yang melawan perusahaan multinasional, dan memperlihatkan dampak buruk perusahaan tambang terhadap masyarakat dan lingkungan. Kajian lain menyoroti tema manipulasi hukum dan dominasi kekuasaan yang muncul di sepanjang cerita.
+
+Novel setebal sekitar 371 halaman ini terbit pada awal tahun 2024. Sebuah analisis mencatat bahwa waktu terbitnya berdekatan dengan masa pemilihan umum 2024, sehingga pesan sosial dan politiknya terasa relevan bagi pembaca saat itu. Ulasan di Gramedia menyebutnya sebagai buku tentang intrik dan korupsi yang terasa sangat dekat dengan kenyataan.$$,
  $$https://covers.openlibrary.org/b/id/14589014-L.jpg$$),
-($$Bumi$$,
- $$Tere Liye$$,
- $$Gramedia Pustaka Utama$$,
- $$2014$$,
- $$Namaku Raib, usiaku 15 tahun, kelas sepuluh. Aku anak perempuan seperti kalian, adik-adik kalian, tetangga kalian. Aku punya dua kucing, namanya si Putih dan si Hitam. Mama dan papaku menyenangkan. Guru-guru di sekolahku seru. Teman-temanku baik dan kompak. Aku sama seperti remaja kebanyakan, kecuali satu hal. Sesuatu yang kusimpan sendiri sejak kecil. Sesuatu yang menakjubkan. Namaku, Raib. Dan aku bisa menghilang.
-
-Bumi adalah buku pertama dari seri fantasi karya Tere Liye yang diterbitkan Gramedia Pustaka Utama pada tahun 2014. Seri ini kemudian berkembang menjadi salah satu seri fantasi Indonesia yang paling populer, dengan lanjutan seperti Bulan, Matahari, Bintang, Ceros dan Batozar, Komet, dan seterusnya.
-
-Ceritanya mengikuti Raib, siswi SMA yang memiliki kemampuan menghilang, bersama dua temannya, Seli dan Ali. Mereka terseret ke dunia lain yang ternyata hidup berdampingan dengan dunia kita, dengan klan-klan yang memiliki teknologi dan kekuatan masing-masing.
-
-Tere Liye menulis seri ini dengan tempo cepat, banyak petualangan, dan persahabatan yang hangat di antara para tokohnya. Dunia ceritanya dibangun sedikit demi sedikit, sehingga pembaca baru tidak kewalahan.
-
-Buku ini cocok bagi pembaca remaja maupun dewasa yang menyukai fantasi petualangan. Karena ini buku pertama, Bumi adalah titik awal yang tepat untuk mengikuti seluruh serinya.$$,
- $$https://covers.openlibrary.org/b/id/12810708-L.jpg$$),
-($$Pulang$$,
- $$Tere Liye$$,
- $$Republika$$,
- $$2015$$,
- $$"Aku tahu sekarang, lebih banyak luka di hati bapakku dibanding di tubuhnya. Juga mamakku, lebih banyak tangis di hati Mamak dibanding di matanya."
-
-Sebuah kisah tentang perjalanan pulang, melalui pertarungan demi pertarungan, untuk memeluk erat semua kebencian dan rasa sakit.
-
-Pulang adalah novel karya Tere Liye yang diterbitkan Republika pada tahun 2015. Novel ini mengikuti Bujang, anak dari pedalaman Sumatra yang dibawa ke kota dan tumbuh di tengah keluarga besar yang menguasai dunia ekonomi bayangan, yaitu bisnis-bisnis yang bergerak di balik layar.
-
-Novel ini menggabungkan aksi, intrik, dan drama keluarga. Di balik pertarungan dan persaingan kekuasaan, Tere Liye menyelipkan perenungan tentang masa lalu, hubungan dengan orang tua, dan arti pulang dalam makna yang lebih dalam.
-
-Pulang mendapat sambutan besar dari pembaca dan kemudian dilanjutkan dengan Pergi dan Pulang-Pergi, yang meneruskan kisah Bujang. Gaya penulisannya cepat dan penuh ketegangan, berbeda dengan novel-novel Tere Liye yang lebih melankolis.
-
-Buku ini cocok bagi pembaca yang menyukai cerita aksi dengan pesan keluarga dan perenungan hidup.$$,
- $$https://covers.openlibrary.org/b/id/12905869-L.jpg$$),
-($$Rindu$$,
- $$Tere Liye$$,
- $$Republika$$,
- $$2014$$,
- $$"Apalah arti memiliki, ketika diri kami sendiri bukanlah milik kami? Apalah arti kehilangan, ketika kami sebenarnya menemukan banyak saat kehilangan, dan sebaliknya, kehilangan banyak pula saat menemukan? Apalah arti cinta, ketika menangis terluka atas perasaan yg seharusnya indah? Bagaimana mungkin, kami terduduk patah hati atas sesuatu yg seharusnya suci dan tidak menuntut apa pun? Wahai, bukankah banyak kerinduan saat kami hendak melupakan? Dan tidak terbilang keinginan melupakan saat kami dalam rindu? Hingga rindu dan melupakan jaraknya setipis benang saja” Rindu- Tere Liye. Lima kisah dalam sebuah perjalanan panjang kerinduan. Selamat membaca.
-
-Rindu adalah novel karya Tere Liye yang diterbitkan Republika pada tahun 2014. Ceritanya berlatar pada akhir tahun 1930-an, ketika sebuah kapal besar membawa rombongan jemaah haji dari Hindia Belanda menuju Tanah Suci.
-
-Sesuai sinopsisnya, novel ini memuat lima kisah dari beberapa penumpang kapal tersebut. Masing-masing membawa pertanyaan dan beban batin sendiri, misalnya tentang masa lalu, kehilangan, cinta, dan kebencian. Perjalanan panjang di atas kapal menjadi kesempatan bagi mereka untuk mencari jawaban.
-
-Tere Liye memadukan latar sejarah masa kolonial dengan perenungan spiritual yang lembut. Novel ini juga memberi gambaran tentang perjalanan haji pada masa itu, yang memakan waktu berbulan-bulan dan penuh tantangan.
-
-Buku ini cocok bagi pembaca yang menyukai novel reflektif dengan latar sejarah dan pesan tentang memaafkan, menerima, dan berdamai dengan masa lalu.$$,
- $$https://covers.openlibrary.org/b/id/14541663-L.jpg$$),
-($$Negeri Para Bedebah$$,
- $$Tere Liye$$,
- $$Gramedia Pustaka Utama$$,
- $$2012$$,
- $$Di negeri para bedebah, kisah fiksi kalah seru dibanding kisah nyata. Di negeri para bedebah, musang berbulu domba berkeliaran di halaman rumah. Tetapi setidaknya, Kawan, di negeri para bedebah, petarung sejati tidak akan pernah berkhianat.
-
-Negeri Para Bedebah adalah novel karya Tere Liye yang diterbitkan Gramedia Pustaka Utama pada tahun 2012. Novel ini termasuk karya Tere Liye bergenre thriller, berbeda dari novel-novel romantis atau keluarganya yang lebih dikenal.
-
-Tokoh utamanya adalah Thomas, seorang konsultan keuangan yang terlibat dalam upaya menyelamatkan sebuah bank dari kebangkrutan, sambil berhadapan dengan politikus, penegak hukum, dan para pelaku kejahatan keuangan. Ceritanya berlangsung dalam waktu singkat dengan tempo yang sangat cepat.
-
-Lewat cerita ini, Tere Liye menyindir praktik korupsi, permainan kekuasaan, dan kejahatan kerah putih yang merugikan banyak orang. Novel ini dilanjutkan dengan Negeri di Ujung Tanduk, yang masih mengikuti tokoh Thomas.
-
-Buku ini cocok bagi pembaca yang menyukai cerita penuh ketegangan dengan latar ekonomi dan politik Indonesia.$$,
- $$https://covers.openlibrary.org/b/id/14541661-L.jpg$$),
-($$Tentang Kamu$$,
- $$Tere Liye$$,
- $$Republika$$,
- $$2016$$,
- $$Terima kasih untuk kesempatan mengenalmu, itu adalah salah satu anugerah terbesar hidupku. Cinta memang tidak perlu ditemukan, cintalah yang akan menemukan kita. Terima kasih. Nasihat lama itu benar sekali, aku tidak akan menangis karena sesuatu telah berakhir, tapi aku akan tersenyum karena sesuatu itu pernah terjadi. Masa lalu. Rasa sakit. Masa depan. Mimpi-mimpi. Semua akan berlalu, seperti sungai yang mengalir. Maka biarlah hidupku mengalir seperti sungai kehidupan. *** Atas dasar pekerjaan, Zaman Zulkarnaen harus menelusuri hidup seorang kliennya, perempuan pemegang paspor Inggris yang barusan meninggal dan mewariskan harta yang jumlahnya bisa menyaingi kekayaan Ratu Inggris. Tiga negara, lima kota, beribu luka. Hingga akhirnya Zaman mengerti, bahwa ini bukan sekadar perkara mengerti jalan hidup seorang klien, melainkan pengejawantahan prinsip kuat di tengah cobaan yang terus mendera. Tentang Kamu adalah novel terbaru Tere Liye. Sebuah karya yang tak hanya akan membawa pembacanya menyelami sebuah petualangan yang seru dan sarat emosi, tapi juga memberikan nilai positif sehingga membuat hidup serasa lebih patut disyukuri.
-
-Tentang Kamu adalah novel karya Tere Liye yang diterbitkan Republika pada tahun 2016. Ceritanya mengikuti Zaman Zulkarnaen, pengacara muda di sebuah firma hukum di London, yang mendapat tugas menelusuri jejak hidup seorang klien yang meninggal dan meninggalkan warisan sangat besar.
-
-Penelusuran itu membawanya ke berbagai tempat dan mengungkap kisah hidup seorang perempuan bernama Sri Ningsih, yang penuh cobaan, kehilangan, dan keteguhan hati. Struktur ceritanya bergerak bolak-balik antara penelusuran Zaman di masa kini dan kisah Sri Ningsih di masa lalu.
-
-Novel ini termasuk karya Tere Liye yang banyak disukai pembaca karena memadukan unsur misteri dengan kisah hidup yang menyentuh. Pesan tentang ketabahan, kebaikan, dan menerima takdir menjadi benang merahnya.
-
-Buku ini cocok bagi pembaca yang menyukai cerita perjalanan hidup yang panjang dan mengharukan.$$,
- $$https://covers.openlibrary.org/b/id/14541664-L.jpg$$),
-($$Hafalan Shalat Delisa$$,
- $$Tere Liye$$,
- $$Republika$$,
- $$2005$$,
- $$Delisa adalah anak perempuan bermata hijau bening yang usianya baru menginjak lima tahun. Ia hidup bersama keluarganya yang sederhana, dan sedang berusaha menghafal bacaan shalat dengan bantuan ibu dan kakak-kakaknya. Namun Tuhan lebih tahu apa yang terbaik bagi hamba-Nya. Tsunami datang dan merenggut senyum dari wajah Delisa. Tsunami mengambil segalanya, keluarganya dan juga kaki kecilnya. Yang tersisa hanya Delisa dan ayahnya. Dalam keadaan seperti itu, mampukah Delisa tetap tersenyum seperti dulu dan menyelesaikan hafalannya?
-
-Hafalan Shalat Delisa adalah salah satu novel awal Tere Liye, diterbitkan Republika pada tahun 2005. Ceritanya berlatar di Aceh dan terinspirasi oleh bencana tsunami yang melanda Aceh pada 26 Desember 2004.
-
-Novel ini mengikuti Delisa, anak kecil yang sedang berusaha menghafal bacaan shalat untuk ujian di sekolahnya. Lewat sudut pandang seorang anak, Tere Liye menggambarkan kehilangan besar dengan cara yang lembut dan penuh harapan.
-
-Novel ini diadaptasi menjadi film pada tahun 2011 dan membuat kisah Delisa dikenal lebih luas. Tema keikhlasan, ketabahan, dan kasih sayang keluarga menjadi inti ceritanya.
-
-Buku ini cocok bagi pembaca dari berbagai usia, termasuk remaja, yang menyukai kisah mengharukan dengan nilai-nilai keagamaan dan kemanusiaan.$$,
- $$https://covers.openlibrary.org/b/id/14541662-L.jpg$$),
-($$Ayahku (Bukan) Pembohong$$,
- $$Tere Liye$$,
- $$Gramedia Pustaka Utama$$,
- $$2011$$,
- $$Kapan terakhir kali kita memeluk ayah kita? Menatap wajahnya, lantas bilang kita sungguh sayang padanya? Kapan terakhir kali kita bercakap ringan, tertawa gelak, bercengkerama, lantas menyentuh lembut tangannya, bilang kita sungguh bangga padanya?
-
-Inilah kisah tentang seorang anak yang dibesarkan dengan dongeng-dongeng kesederhanaan hidup. Kesederhanaan yang justru membuat ia membenci ayahnya sendiri. Inilah kisah tentang hakikat kebahagiaan sejati. Jika kalian tidak menemukan rumus itu di novel ini, tidak ada lagi cara terbaik untuk menjelaskannya.
-
-Mulailah membaca novel ini dengan hati lapang, dan saat tiba di halaman terakhir, berlarilah secepat mungkin menemui ayah kita, sebelum semuanya terlambat, dan kita tidak pernah sempat mengatakannya.
-
-Ayahku (Bukan) Pembohong adalah novel karya Tere Liye yang diterbitkan Gramedia Pustaka Utama pada tahun 2011. Novel ini berkisah tentang hubungan seorang anak dengan ayahnya, yang sejak kecil menceritakan kisah-kisah luar biasa tentang masa mudanya.
-
-Ketika sang anak tumbuh dewasa, ia mulai meragukan kebenaran cerita-cerita itu dan merasa ayahnya telah membohonginya. Konflik inilah yang menjadi inti novel, sekaligus pintu untuk membicarakan arti kesederhanaan dan kebahagiaan.
-
-Seperti banyak karya Tere Liye lainnya, novel ini ditulis dengan bahasa yang sederhana dan menyentuh. Pesannya tentang menghargai orang tua dan mencari kebahagiaan dalam hal-hal sederhana membuat novel ini sering direkomendasikan untuk dibaca bersama keluarga.
-
-Buku ini cocok bagi pembaca remaja dan dewasa yang menyukai kisah keluarga yang hangat dan reflektif.$$,
- $$https://covers.openlibrary.org/b/id/14541670-L.jpg$$),
-($$Rembulan Tenggelam di Wajahmu$$,
- $$Tere Liye$$,
- $$Republika$$,
- $$2009$$,
- $$Tutup mata kita. Tutup pikiran kita dari carut- marut kehidupan. Mari berpikir takjim sejenak. Bayangkan saat ini ada satu malaikat bersayap indah datang kepada kita, lantas lembut berkata: Aku memberikan kau kesempatan hebat. Lima kesempatan untuk bertanya tentang rahasia kehidupan, dan aku akan menjawabnya langsung sekarang. Lima Pertanyaan. Lima jawaban. Apakah pertanyaan pertamamu? Maka apakah kita akan bertanya: Apakah cinta itu? Apakah hidup ini adil? Apakah kaya adalah segalanya? Apakah kita memilki pilihan dalam hidup? Apakah makna kehilangan? Ray (tokoh utama dalam kisah ini), ternyata memiliki kecamuk pertanyaan sendiri. Lima pertanyaan sebelum akhirnya dia mengerti makna hidup dan kehidupannya. Siapkan energi Anda untuk memasuki dunia Fantasi Tere-Liye tentang perjalanan hidup. Di sini hanya ada satu rumus: semua urusan adalah sederhana. Maka mulailah membaca dengan menghela nafas lega
-
-Rembulan Tenggelam di Wajahmu adalah novel karya Tere Liye yang diterbitkan Republika pada tahun 2009. Novel ini mengikuti Ray, laki-laki yang tumbuh di panti asuhan dan menjalani hidup yang penuh luka, kegagalan, dan kehilangan.
-
-Keunikan novel ini terletak pada strukturnya. Ray diberi kesempatan untuk melihat kembali perjalanan hidupnya dan mendapatkan jawaban atas lima pertanyaan besar yang selama ini menghantuinya. Setiap jawaban membuka sisi baru dari peristiwa-peristiwa yang pernah ia alami.
-
-Lewat cerita ini, Tere Liye mengajak pembaca merenungkan bahwa setiap kejadian dalam hidup saling terhubung, dan bahwa banyak hal yang tampak tidak adil sebenarnya memiliki makna yang belum kita pahami. Novel ini juga diadaptasi menjadi film.
-
-Buku ini cocok bagi pembaca yang menyukai novel reflektif tentang makna hidup, takdir, dan pengampunan.$$,
- $$https://covers.openlibrary.org/b/id/14541660-L.jpg$$),
-($$Daun yang Jatuh Tak Pernah Membenci Angin$$,
- $$Tere Liye$$,
- $$Gramedia Pustaka Utama$$,
- $$2010$$,
- $$Dia bagai malaikat bagi keluarga kami. Merengkuh aku, adikku, dan Ibu dari kehidupan jalanan yang miskin dan nestapa. Memberikan makan, tempat berteduh, sekolah, dan janji masa depan yang lebih baik. Dia sungguh bagai malaikat bagi keluarga kami. Memberikan kasih sayang, perhatian, dan teladan tanpa mengharap budi sekali pun. Dan lihatlah, aku membalas itu semua dengan membiarkan mekar perasaan ini. Ibu benar, tak layak aku mencintai malaikat keluarga kami. Tak pantas. Maafkan aku, Ibu. Perasaan kagum, terpesona, atau entahlah itu muncul tak tertahankan bahkan sejak rambutku masih dikepang dua. Sekarang, ketika aku tahu dia boleh jadi tidak pernah menganggapku lebih dari seorang adik yang tidak tahu diri, biarlah... Biarlah aku luruh ke bumi seperti sehelai daun... daun yang tidak pernah membenci angin meski harus terenggutkan dari tangkai pohonnya.
-
-Daun yang Jatuh Tak Pernah Membenci Angin adalah novel karya Tere Liye yang diterbitkan Gramedia Pustaka Utama. Novel ini termasuk karya Tere Liye yang paling dikenal karena judulnya yang puitis dan kisahnya yang menyentuh.
-
-Ceritanya dituturkan oleh Tania, gadis yang bersama ibu dan adiknya pernah hidup di jalanan sebelum ditolong oleh seorang laki-laki baik hati. Seiring waktu, rasa terima kasih Tania tumbuh menjadi perasaan yang lebih dalam, dan ia harus berdamai dengan perasaan itu.
-
-Novel ini relatif pendek dan ditulis dengan gaya melankolis yang khas. Tema tentang cinta yang tak terucap, pengorbanan, dan menerima kenyataan membuat banyak pembaca merasa terhubung dengan kisahnya.
-
-Buku ini cocok bagi pembaca yang menyukai kisah cinta yang lembut dan penuh perenungan.$$,
- $$https://covers.openlibrary.org/b/id/10441642-L.jpg$$),
-($$Rasa$$,
+($$Tanah Para Bandit$$,
  $$Tere Liye$$,
  $$Sabak Grip Nusantara$$,
- $$2022$$,
- $$Apakah memaafkan itu mudah diberikan? Apakah melupakan itu ringan dilakukan? Sayangnya, itu sering kali lebih enteng diucapkan, tapi di hati terdalam tetap begitulah. Bagaimana caranya kita memeluk erat semua rasa marah, benci, sakit hati, ketika itu bahkan baru mulai dibicarakan saja sudah menyakitkan? Bagaimana berdamai dengan situasi tersebut? Inilah novel tentang ’rasa’. Berbagai rasa berkumpul di novel ini. Jika kalian tertawa, menangis, atau merenung panjang saat membaca buku ini, ingatlah selalu: apapun yang terjadi atas kehidupan, tidak semuanya berjalan sesuai keinginan kita. Tapi kita selalu bisa menerimanya.
+ $$2023$$,
+ $$Di sini, para penjahat dibesarkan sejak buaian. Dilatih lewat kebohongan. Dididik dengan kemunafikan. Diajarkan melalui ketidakpedulian. Di sini, semua bisa diatur sepanjang ada uangnya. Yang bodoh bisa menjadi pintar seketika. Yang tidak layak bisa segera memenuhi syarat. Yang bersalah bisa jadi benar. Yang bengkok bisa diluruskan. Tidak suka lurus? Mari dibengkokkan lagi. Di sini, di Tanah Para Bandit, tidak ada lagi beda antara penjahat bejat dengan tuan nyonya terhormat. Mencuri, merampok hak orang lain, lumrah saja. Ayo, jangan terlalu serius, Kawan. Kita berpesta malam ini. Buku ini adalah buku ke-7 dari serial aksi Tere Liye. Setelah: Negeri Para Bedebah, Negeri Di Ujung Tanduk, Pulang, Pergi, Pulang-Pergi, dan Bedebah Di Ujung Tanduk.
 
-Rasa adalah novel karya Tere Liye yang diterbitkan Sabak Grip Nusantara pada tahun 2022. Sabak Grip Nusantara adalah penerbit yang menerbitkan banyak karya terbaru Tere Liye.
+Tanah Para Bandit adalah novel karya Tere Liye yang diterbitkan Sabak Grip Nusantara pada tahun 2023. Seperti disebut dalam sinopsisnya, buku ini adalah buku ketujuh dari serial aksi Tere Liye, setelah Negeri Para Bedebah, Negeri di Ujung Tanduk, Pulang, Pergi, Pulang-Pergi, dan Bedebah di Ujung Tanduk.
 
-Seperti tergambar dari sinopsisnya, novel ini membahas pergulatan batin tentang memaafkan, melupakan, dan berdamai dengan rasa marah, benci, dan sakit hati. Tere Liye menempatkan berbagai perasaan itu sebagai pusat cerita, sehingga novel ini terasa reflektif.
+Serial aksi ini dikenal dengan tempo cerita yang cepat, pertarungan, dan intrik di dunia kekuasaan dan uang. Di balik aksinya, Tere Liye kerap menyelipkan sindiran tentang korupsi, kemunafikan, dan hukum yang bisa dibeli, tema yang juga terasa kuat dalam sinopsis buku ini.
 
-Tema menerima keadaan yang tidak berjalan sesuai keinginan sudah sering muncul dalam karya-karya Tere Liye, misalnya Rembulan Tenggelam di Wajahmu dan Rindu. Pembaca yang menyukai karya-karya tersebut kemungkinan akan menikmati novel ini.
+Pembaca yang sudah mengikuti serial ini akan lebih mudah memahami tokoh dan hubungan di antara mereka, tetapi pembaca baru tetap dapat menikmati semangat ceritanya. Buku ini cocok bagi pembaca yang menyukai cerita aksi dengan kritik sosial.
 
-Buku ini cocok bagi pembaca yang mencari novel tentang pengampunan dan penerimaan, dengan bahasa yang sederhana dan mudah diikuti.$$,
- $$https://covers.openlibrary.org/b/id/14542360-L.jpg$$);
+Dengan tebal 433 halaman, novel ini disebut sebagai buku ketujuh sekaligus penutup serial aksi Tere Liye. Tokoh utamanya adalah Padma, perempuan muda yang sejak kecil dilatih secara fisik, pikiran, mental, dan jiwa. Bersama teman-temannya, ia berhadapan dengan sebuah kelompok bandit bernama Jiwa Korsa.
+
+Latar ceritanya sama dengan novel Pulang, yaitu Talang, tempat yang dalam serial ini dikenal sebagai tanah yang melahirkan para bandit dan tempat asal tokoh Bujang. Ulasan di Gramedia menilai karakter yang kuat dan pengungkapan misteri kejahatan secara bertahap sebagai kekuatan novel ini. Sejumlah kajian akademik juga membahasnya, antara lain dari sisi bentuk-bentuk kejahatan ekonomi, kekerasan, dan politik, serta tema kesetaraan gender.$$,
+ $$https://covers.openlibrary.org/b/id/14542361-L.jpg$$),
+($$Aldebaran$$,
+ $$Tere Liye$$,
+ $$Sabak Grip Nusantara$$,
+ $$2024$$,
+ $$ALDEBARAN Bagian 1 adalah buku ke-16 dari serial BUMI. Setelah petualangan Raib dan Seli di klan Matahari Minor, persahabatan mereka terancam. Seli tidak bisa menjelaskan kenapa dia memilih Tazk dibanding Ily. Sementara Raib, dipenuhi prasangka buruk atas sahabat terbaiknya. Apakah mereka berdua bisa berdamai? Lantas, apa peran April? Kabar baiknya, Ali, yang masih di SagaraS, memutuskan pulang ke klan rendah. Di buku ini juga, perjalanan menuju klan Aldebaran siap dimulai. Adalah Bibi Gill yang mengumpulkan semua pemegang pusaka Sarung Tangan, petarung-petarung besar dan pimpinan klan di konstelasi jauh untuk merundingkan urusan tersebut. Inilah buku ke-16 dari Serial BUMI
+
+Aldebaran adalah novel karya Tere Liye yang diterbitkan Sabak Grip Nusantara pada tahun 2024. Sesuai keterangan di sinopsisnya, buku ini adalah buku ke-16 dari Serial Bumi, serial fantasi yang dimulai dengan Bumi pada tahun 2014.
+
+Serial Bumi mengikuti petualangan tiga sahabat, Raib, Seli, dan Ali, yang menjelajahi dunia-dunia paralel yang disebut klan, masing-masing dengan kekuatan dan teknologinya sendiri. Di buku ini, persahabatan Raib dan Seli diuji, sementara perjalanan menuju klan Aldebaran mulai dipersiapkan.
+
+Karena merupakan bagian dari serial panjang, buku ini akan paling dinikmati oleh pembaca yang sudah mengikuti buku-buku sebelumnya. Bagi penggemar Serial Bumi, buku ini membuka babak baru petualangan yang lebih luas. Cocok bagi pembaca remaja maupun dewasa yang menyukai fantasi petualangan dan kisah persahabatan.
+
+Menurut ulasan di Gramedia, buku ini tidak lagi berfokus pada petualangan seru Raib, Seli, dan Ali seperti buku-buku sebelumnya. Suasananya lebih hangat, seperti sebuah reuni keluarga besar yang mempertemukan banyak tokoh dari seluruh serial. Pembaca disarankan membaca buku-buku sebelumnya terlebih dahulu agar memahami hubungan antartokoh.
+
+Dalam sebuah wawancara pada tahun 2022, Tere Liye menyebut bahwa Aldebaran akan menjadi penutup fase pertama dari semesta Bumi, dan bahwa fase berikutnya sudah direncanakan. Karena itu, buku ini memiliki posisi penting bagi penggemar Serial Bumi yang sudah mengikuti petualangan para tokohnya sejak buku pertama.$$,
+ $$https://covers.openlibrary.org/b/id/15110517-L.jpg$$),
+($$Hana-Tara-Hata$$,
+ $$Tere Liye$$,
+ $$Sabak Grip Nusantara$$,
+ $$2025$$,
+ $$Kalian sudah mengenal Hana, penduduk di Padang Perdu Klan Matahari? Maka ini adalah kisah tentangnya. Kisah yang mengharukan. Tentang seorang pemilik kekuatan “membaca alam sekitar”. Tentang seorang Ibu yang sangat menyayangi anaknya. Rasa sakit. Kehilangan. Pengorbanan. Kebencian. Memaafkan. Tumpah menjadi satu. Juga pertarungan mematikan, tempat-tempat berbahaya, hewan dan tumbuhan legendaris. Kalian mungkin telah tahu kisah ini dari buku-buku sebelumnya, bukan? Tapi itu tidak lengkap. Belum selesai. Karena kita tidak benar-benar tahu akhir sesuatu sebelum sesuatu itu benar-benar berakhir, bukan? Dan saat kisah itu ‘berakhir’, itu boleh jadi ternyata menjadi ‘awal’ dari kisah lain yang lebih seru. HANA-TARA-HATA adalah buku ke-17 dari Serial BUMI.
+
+HANA-TARA-HATA adalah novel karya Tere Liye yang diterbitkan Sabak Grip Nusantara pada tahun 2025. Menurut sinopsisnya, buku ini adalah buku ke-17 dari Serial Bumi, setelah Aldebaran.
+
+Berbeda dari banyak buku sebelumnya yang berfokus pada Raib, Seli, dan Ali, buku ini mengangkat kisah Hana, penduduk Padang Perdu Klan Matahari yang sudah dikenal pembaca dari buku-buku terdahulu. Sinopsisnya menjanjikan kisah tentang seorang ibu, kehilangan, pengorbanan, dan memaafkan, di samping pertarungan dan tempat-tempat berbahaya yang menjadi ciri serial ini.
+
+Buku ini cocok bagi penggemar Serial Bumi yang ingin mengenal lebih dalam tokoh-tokoh pendukungnya. Pembaca baru sebaiknya memulai dari buku pertama, Bumi, agar memahami dunia dan sejarah tokoh-tokohnya.$$,
+ $$https://covers.openlibrary.org/b/id/15111012-L.jpg$$),
+($$Sendiri$$,
+ $$Tere Liye$$,
+ $$Sabak Grip Nusantara$$,
+ $$2024$$,
+ $$Tidak ada yang abadi di dunia ini. Lautan bisa mengering. Gunung bisa rata. Benua terpisah, bersatu, dan terpisah lagi. Apalagi cinta pasangan manusia. Sehebat apapun cinta tersebut, pasti akan berakhir. Waktu akan menelannya. Inilah kisah tentang seorang laki-laki usia 70 tahun, yang ditinggal istrinya meninggal setelah begitu lama menikah, menghabiskan waktu bersama-sama. Saat hari itu tiba, apa yang harus dia lakukan? Bagaimana dia akan melewati sisa hidupnya? Menjalani hari demi hari? Apakah hidupnya masih seru? Apakah masih ada petualangan spesial baginya. Atau hanya tersisa. Sendiri.
+
+Sendiri adalah novel karya Tere Liye yang diterbitkan Sabak Grip Nusantara pada tahun 2024. Seperti tergambar dari sinopsisnya, novel ini mengangkat kisah yang jarang menjadi pusat cerita fiksi populer: seorang laki-laki berusia tujuh puluh tahun yang harus melanjutkan hidup setelah ditinggal istrinya.
+
+Tema kehilangan, kesepian di usia senja, dan pertanyaan tentang makna hidup setelah orang terkasih pergi menjadi inti novel ini. Tere Liye juga memberi ruang untuk harapan, sebagaimana tersirat dalam pertanyaan apakah masih ada petualangan spesial bagi sang tokoh.
+
+Seperti banyak karya Tere Liye lainnya, novel ini ditulis dengan bahasa yang sederhana dan menyentuh. Buku ini cocok bagi pembaca yang menyukai kisah reflektif tentang cinta, kehilangan, dan cara manusia berdamai dengan perubahan.
+
+Novel setebal 320 halaman ini terbit pada 18 Oktober 2024. Ulasan di situs Gramedia memuji alurnya yang rapi dan kejutan-kejutan yang mampu mengaduk emosi pembaca, meskipun bagian awal ceritanya dinilai agak lambat.
+
+Dengan tokoh utama seorang laki-laki berusia tujuh puluh tahun, novel ini menawarkan sudut pandang yang jarang ditemui dalam novel populer Indonesia. Pembaca muda bisa mendapat gambaran tentang perasaan orang tua yang kehilangan pasangan hidupnya, sementara pembaca dewasa mungkin akan menemukan banyak hal yang terasa dekat dengan pengalaman keluarga mereka sendiri.$$,
+ $$https://covers.openlibrary.org/b/id/14811646-L.jpg$$),
+($$Sebelas$$,
+ $$Tere Liye$$,
+ $$Sabak Grip Nusantara$$,
+ $$2025$$,
+ $$Sebelas pemain dikumpulkan dari berbagai tempat. Tanah Papua, Pulau Sumbawa, Sumatera, Bali, Jawa dan berbagai tempat lain. Sebelas pemain dikumpulkan untuk membentuk tim tangguh. Yang bersiap mengalahkan Real Madrid, Manchester United, Barcelona, dan klub-klub besar Eropa dan Amerika Selatan. Inilah kisah tentang sebelas anak-anak berbakat Nusantara. Apa pentingnya sepakbola bagi mereka? Apa pentingnya sepakbola bagi peradaban dunia? Atau itu hanyalah bisnis trilyunan rupiah, pertunjukan komersil, kehidupan mewah, popularitas, yang kosong saja.
+
+Sebelas adalah novel karya Tere Liye yang diterbitkan Sabak Grip Nusantara pada tahun 2025. Novel ini mengangkat dunia sepak bola, olahraga yang sangat digemari di Indonesia, lewat kisah sebelas anak berbakat dari berbagai penjuru Nusantara, mulai dari Papua, Sumbawa, Sumatra, Bali, hingga Jawa.
+
+Selain menghadirkan semangat persahabatan dan perjuangan membentuk tim yang tangguh, sinopsisnya juga mengajukan pertanyaan yang lebih dalam tentang arti sepak bola: apakah sekadar bisnis dan popularitas, atau sesuatu yang lebih bermakna bagi kehidupan.
+
+Novel ini cocok bagi pembaca remaja maupun dewasa, terutama pencinta sepak bola dan pembaca yang menyukai kisah tentang mimpi, kerja keras, dan keberagaman Indonesia.
+
+Novel ini terbit pada April 2025. Menurut ulasan pembaca, cerita berpusat pada Paul, seorang mantan pemain sepak bola terkenal, yang berkeliling ke berbagai daerah di Nusantara untuk mencari anak-anak berbakat dan membentuk tim yang mampu menghadapi klub-klub besar dunia.
+
+Pembaca juga menilai bahwa novel ini bukan sekadar cerita tentang sepak bola. Di balik pencarian para pemain, ada perjalanan tokoh-tokohnya dalam menemukan jawaban tentang luka masa lalu dan belajar menerimanya. Sebagian pembaca menyebut susunan dan suasana ceritanya cukup berbeda dari novel-novel lepas Tere Liye sebelumnya, tetapi ciri khas penulisannya tetap terasa.$$,
+ $$https://covers.openlibrary.org/b/id/15111013-L.jpg$$),
+($$Bungkam Suara$$,
+ $$J. S. Khairen$$,
+ $$Gramedia Widiasarana Indonesia$$,
+ $$2023$$,
+ $$Ini adalah Hari Bebas Bicara di Negara Kesatuan Adat Lawaknesia (NAKAL). Siapa saja boleh berbicara secara gamblang, terang-terangan, tanpa takut akan konsekuensi hukum. Setiap warga negara berhak berbicara: membongkar kejahatan, membeberkan penipuan, mengungkapkan keburukan. Tujuannya, agar tercapai keadilan untuk seluruh rakyat. Namun, kawan, tujuan mulia ini berubah menjadi awan hitam. Jutaan aib terbongkar. Jutaan fitnah tersebar. Jutaan kebencian dan perundungan mengakar. Rakyat berkelahi dengan rakyat. Tetangga dengan tetangga. Murid dengan guru. Karyawan dengan atasan. Anak dengan orangtua. Sahabat dengan sahabat. Kekasih dengan kekasih. Ucapan orang terdekat merobek dinding tiap rumah. Ini adalah Hari Bebas Bicara. Setiap dendam, setiap benci, setiap amarah, lepas berkeliaran. Namun percayalah, kawan, orang jujur selalu ada, bak jarum dalam tumpukan jerami sekalipun.
+
+Bungkam Suara adalah novel karya J. S. Khairen yang diterbitkan Gramedia Widiasarana Indonesia pada tahun 2023. J. S. Khairen dikenal luas lewat novel Kami (Bukan) Sarjana Kertas, yang populer di kalangan pembaca muda.
+
+Novel ini berlatar di sebuah negara rekaan bernama Negara Kesatuan Adat Lawaknesia, disingkat NAKAL. Lewat gagasan tentang Hari Bebas Bicara, novel ini menyindir dunia yang dipenuhi fitnah, perundungan, dan kebencian, terutama di era ketika siapa pun bisa bersuara tanpa batas. Nama negaranya sendiri sudah memberi isyarat bahwa ceritanya dikemas dengan humor dan satire.
+
+Tema utama buku ini adalah kebebasan berbicara, tanggung jawab atas ucapan, dan kejujuran di tengah masyarakat yang mudah terpecah. Buku ini cocok bagi pembaca yang menyukai fiksi satir dengan kritik sosial yang relevan dengan kehidupan sehari-hari dan dunia media sosial.
+
+Novel ini terbit pada Januari 2023 dengan tebal sekitar 368 halaman. Tokoh utamanya bernama Juju Timur, yang kepribadian dan cara bertahannya menghadapi tekanan menjadi bahan kajian psikologi sastra.
+
+Bungkam Suara cukup banyak dibahas dalam penelitian kampus. Para peneliti membacanya sebagai potret negara totaliter, lengkap dengan pengawasan ketat, propaganda, dan ketidakadilan, serta bagaimana warga negara menanggapi pemerintahannya. Di Goodreads, novel ini mendapat penilaian rata-rata di atas empat dari ratusan pembaca, menunjukkan sambutan yang baik dari pembaca muda.$$,
+ $$https://covers.openlibrary.org/b/id/14848204-L.jpg$$),
+($$Perkumpulan Anak Luar Nikah$$,
+ $$Grace Tioso$$,
+ $$Noura Books$$,
+ $$2023$$,
+ $$Shocking Confession from an Indonesian’s Ex-ASEAN Scholarship Recipient Judul artikel itu mengguncang media sosial dalam semalam. Martha, sang tersangka, panik. Keteledoran masa lalunya kini mencuat ke permukaan. Sebagai lulusan Computer Science, bagaimana bisa dia meninggalkan jejak digital yang menghantuinya dengan iming-iming penjara pada masa sekarang? Pernikahannya guncang, kebebasannya terenggut, anak-anaknya terancam kehilangan sosok ibu hanya karena Martha memainkan “25 Question About Me” di blognya belasan tahun lalu dan menjawab terlalu jujur pertanyaan: “What is the wildest thing you’ve ever done when you’re 17 years old?” I forged a legal document. Later, I used it to apply for a scholarship, and I got accepted!
+
+Perkumpulan Anak Luar Nikah adalah novel karya Grace Tioso yang diterbitkan Noura Books pada tahun 2023. Sesuai sinopsisnya, cerita dibuka dengan sebuah artikel yang viral di media sosial dan membongkar rahasia masa lalu tokoh utamanya, Martha.
+
+Novel ini menyentuh tema yang sangat dekat dengan zaman sekarang: jejak digital yang sulit dihapus, kejujuran yang berbalik menjadi masalah, dan bagaimana kesalahan di masa muda dapat mengguncang kehidupan keluarga bertahun-tahun kemudian. Judulnya yang provokatif juga memberi isyarat bahwa cerita ini membahas identitas dan latar belakang keluarga.
+
+Buku ini cocok bagi pembaca yang menyukai fiksi kontemporer dengan konflik keluarga, isu sosial, dan cerita yang dipicu oleh dunia internet.
+
+Grace Tioso mengembangkan novel ini dari cerita pendeknya yang berjudul sama. Ceritanya mengangkat pengalaman warga Tionghoa-Indonesia, termasuk persoalan kewarganegaraan: dalam kisah Martha, sang ayah digambarkan tidak memiliki status kewarganegaraan yang jelas. Media internasional seperti South China Morning Post juga mengulas latar novel ini, yaitu pengalaman warga Tionghoa-Indonesia yang tumbuh di masa Orde Baru.
+
+Novel setebal 396 halaman ini memenangkan salah satu penghargaan Mizan Writing Bootcamp pada tahun 2023 dan juara pertama Ayu Utami Literary Award for Beginners pada tahun 2024. Kolom buku di Detik menyebut gaya bahasanya mengingatkan pada novel metropop, tetapi ceritanya berubah menjadi thriller di bagian tengah, ketika pemalsuan dokumen yang dilakukan Martha ternyata membawa akibat yang sangat serius di Singapura. Banyak pembaca di Goodreads memberi nilai tinggi dan mengaku buku ini membuka mata mereka tentang hak istimewa yang tidak dimiliki semua orang.$$,
+ $$https://covers.openlibrary.org/b/id/14613013-L.jpg$$),
+($$Timun Jelita$$,
+ $$Raditya Dika$$,
+ $$GagasMedia$$,
+ $$2024$$,
+ $$Dalam novel Timun Jelita kita akan mengikuti cerita Timun, seorang akuntan freelance yang ingin bermusik setelah ayahnya wafat dan meninggalkan sebuah gitar tua. Timun kesulitan mendapatkan teman band karena usianya sudah tidak muda lagi. Untung ada Jelita. Sepupunya ini adalah mahasiswi yang pernah dikecewakan oleh teman-teman band-nya yang lama. Mereka pun sepakat membuat duo musik. Dalam 8 bab novel ini kita akan mengikuti cerita tentang suka duka bermusik di zaman sekarang, tentang jujur dalam berkarya, dan tentang umur bukanlah halangan untuk membangkitkan kembali passion yang lama terkubur.
+
+Timun Jelita adalah novel karya Raditya Dika yang diterbitkan GagasMedia pada tahun 2024. Raditya Dika dikenal sebagai penulis, komedian, dan sutradara film. Ia mulai dikenal lewat buku Kambing Jantan dan kemudian menulis buku-buku komedi seperti Cinta Brontosaurus, Marmut Merah Jambu, Manusia Setengah Salmon, dan Koala Kumal.
+
+Novel ini mengikuti Timun, seorang akuntan lepas yang ingin kembali bermusik setelah ayahnya meninggal dan meninggalkan sebuah gitar tua, serta sepupunya, Jelita. Bersama-sama mereka membentuk duo musik dan menghadapi suka duka bermusik di zaman sekarang.
+
+Sesuai sinopsisnya, novel yang terdiri dari delapan bab ini membicarakan kejujuran dalam berkarya dan keyakinan bahwa usia bukan halangan untuk mengejar kembali passion yang lama terkubur. Buku ini cocok bagi pembaca yang menyukai cerita ringan dengan humor khas Raditya Dika, terutama mereka yang pernah bermimpi bermusik.
+
+Novel setebal 168 halaman ini resmi dirilis pada 6 Desember 2024. Tokoh Timun digambarkan sebagai akuntan berusia sekitar empat puluh tahun, sementara Jelita adalah sepupunya yang masih kuliah dan sulit percaya pada orang baru. Kisah mereka berlanjut dalam Timun Jelita Volume 2.
+
+Ulasan di blog Gramedia menyebut novel ini sebagai kisah inspiratif tentang mengejar mimpi meskipun ada banyak hambatan, dengan tokoh-tokoh yang terasa nyata dan seolah mencerminkan diri Raditya Dika sendiri. Novel ini juga menjadi bahan kajian akademik yang membahas pencarian makna hidup para tokohnya.$$,
+ $$https://covers.openlibrary.org/b/id/14837534-L.jpg$$),
+($$Perempuan Pemanggul Jenazah$$,
+ $$Hendra Purnama$$,
+ $$Lentera App$$,
+ $$2023$$,
+ $$“Dewi Sekar Atisaya akan melewati desa ini. Ia datang sambil menebarkan aroma bunga di depannya, tapi meninggalkan bau bangkai di belakangnya. Tutup hidung kita, jangan sampai aroma itu terhirup. Kita bisa gila karenanya. Jangan pula coba-coba mengikutinya karena kita akan mati. Sebab seribu tumbak di belakangnya ada malaikat pencabut nyawa yang bisa menarik jiwa manusia hanya dengan satu entakan.” Demikian cerita itu terus beredar dari mulut ke telinga. Selama tiga hari aku ada di desa ini, nama Dewi Sekar Atisaya—putri Pangeran Indrawardhana dan Ratu Saridyanti, penguasa Pamunjungan Bwanakerta—terus bergema. Aku jadi bertanya-tanya, seperti apa rupanya? Seorang penulis cerita tiba di satu desa dan mendengar cerita seperti itu. Ia penasaran, semengerikan apa sosok Dewi Sekar Atisaya itu sebenarnya? Untuk memperoleh jawabannya dia harus menunggu, dan mencegat sosok itu sebelum masuk ke padang pasir tak bertuan, yang memisahkan kehidupan dan kematian.
+
+Perempuan Pemanggul Jenazah adalah karya Hendra Purnama yang terbit pada tahun 2023. Dari sinopsisnya, cerita ini memiliki nuansa legenda dan kerajaan: seorang penulis cerita tiba di sebuah desa dan mendengar kisah menyeramkan tentang Dewi Sekar Atisaya, putri penguasa Pamunjungan Bwanakerta.
+
+Kisah ini memadukan unsur misteri, cerita rakyat, dan suasana gaib. Penyebutan padang pasir yang memisahkan kehidupan dan kematian memberi isyarat bahwa ceritanya bergerak di wilayah antara dunia nyata dan dunia lain, dengan rasa penasaran sang narator sebagai penggerak cerita.
+
+Buku ini cocok bagi pembaca yang menyukai fiksi bernuansa legenda, misteri, dan kisah yang dituturkan seperti cerita turun-temurun dari mulut ke mulut.
+
+Berdasarkan catatan di Goodreads, karya ini terbit sebagai buku elektronik melalui Lentera App pada 17 Maret 2023, dengan tebal sekitar 73 halaman. Ukurannya yang ringkas membuat buku ini bisa dibaca dalam sekali duduk.$$,
+ $$https://covers.openlibrary.org/b/id/15103633-L.jpg$$),
+($$Ngomongin Uang$$,
+ $$Glenn Ardi$$,
+ $$Penerbit Buku Kompas$$,
+ $$2024$$,
+ $$Kekayaan sering kali bukan hanya soal uang atau status sosial. Kekayaan yang sesungguhnya bersifat sangat personal, karena setiap orang mendefinisikan kesuksesan dan kebahagiaannya dengan cara yang berbeda. Namun, apa pun definisi kekayaan bagi kamu, UANG adalah alat ukur dan kendaraan yang bisa membawamu mencapai tujuan. Karena itulah, memahami keuangan adalah hal yang fundamental dalam membangun kehidupan terbaik versi kamu. Buku ini hadir untuk kamu yang merasa keuangannya mandek, kamu yang overthinking dan terus membandingkan dirimu dengan kesuksesan orang lain, dan kamu yang merasa masa depan keuangan kamu suram—Yuk, kita Ngomongin Uang! Karena ngomongin uang telah mengubah hidup saya! Membuat hidup saya lebih terencana, memberi rasa aman, kedamaian, kebebasan, sekaligus rasa kecukupan. Buku ini bukan soal motivasi sukses atau cara cepat kaya, tetapi buku ini akan membuat kamu menjadi ‘KAYA’ versi kamu sendiri.
+
+Ngomongin Uang adalah buku nonfiksi karya Glenn Ardi yang diterbitkan Penerbit Buku Kompas pada tahun 2024. Buku ini membahas keuangan pribadi dengan bahasa yang santai dan dekat dengan pembaca muda.
+
+Seperti dijelaskan dalam sinopsisnya, buku ini tidak menawarkan cara cepat kaya, melainkan mengajak pembaca memahami uang sebagai alat untuk mencapai tujuan hidup masing-masing. Penulis menekankan bahwa definisi kaya bersifat personal, dan bahwa memahami keuangan dapat memberi rasa aman, rencana yang lebih jelas, dan rasa cukup.
+
+Sasaran utama buku ini adalah pembaca yang merasa keuangannya mandek, sering membandingkan diri dengan orang lain, atau cemas tentang masa depan keuangannya. Buku ini cocok sebagai bacaan awal bagi mahasiswa dan pekerja muda yang ingin mulai mengatur keuangan dengan lebih terencana.
+
+Judul lengkap buku ini adalah Ngomongin Uang: Menjadi 'KAYA' Versi Kamu Sendiri, dengan tebal sekitar 256 halaman. Penulisnya, Glenn Ardi, adalah praktisi di bidang edutech, branding, dan content marketing, sekaligus pendiri dan CEO Ngomongin Uang, platform edukasi keuangan yang ia dirikan pada awal tahun 2020 untuk meningkatkan literasi keuangan masyarakat.
+
+Menurut ulasan media, buku ini menekankan perbedaan antara kebutuhan dan keinginan, serta pesan bahwa pengelolaan uang lebih bergantung pada niat dan disiplin daripada pada besarnya penghasilan. Catatan pembaca menyebut bagian awal buku membahas fondasi, termasuk konsep dan sejarah uang, sebelum masuk ke cara mengelola keuangan sehari-hari.$$,
+ $$https://covers.openlibrary.org/b/id/15265063-L.jpg$$),
+($$Yang Kamu Belum Tahu Soal Palestina$$,
+ $$Shofwan Al-Banna$$,
+ $$Pro-U Media$$,
+ $$2024$$,
+ $$Palestina adalah ujian bagi kemanusiaan kita. Gimana nggak? Kejahatan demi kejahatan terjadi dengan bukti yang terang benderang. Penjajah telah membunuh puluhan ribu bahkan ratusan ribu jiwa manusia (dengan mayoritasnya anak-anak dan perempuan), melukai ratusan ribu hingga jutaan lainnya, menghancurkan rumah dan memaksa jutaan orang menjadi pengungsi, menghancurkan rumah sakit-rumah sakit, memburu para dokter dan tenaga medis, serta para jurnalis dan pekerja kemanusiaan, menghancurkan sekolah, dan bahkan tenda-tenda pengungsian. Ini baru menghitung korban selama Oktober 2023 hingga Mei 2024, yang masih terus bertambah. Terlebih lagi, kejahatan- kejahatan ini semua sudah terjadi lebih dari 75 tahun. Dalam ronde kejahatan yang terakhir ini saja (data dari Oktober 2023-April 2024), Israel telah menjatuhkan lebih dari 70.000 ton bom di sebuah wilayah seluas 365 kilometer persegi Ya, luas Jalur Gaza yang diblokade sejak tahun 2007 itu cuma sedikit lebih besar dari Depok, Jawa Barat yang 200 kilometer persegi dan lebih kecil dari Jakarta yang mencapai 661,52 kilometer persegi. Di wilayah padat yang diisi oleh para pengungsi itu, entitas yang mengklaim sebagai “pasukan paling bermoral sedunia” itu menjatuhkan bom lebih banyak daripada seluruh bom yang dijatuhkan di Dresden, Hamburg, dan London selama Perang Dunia II. Berdasarkan penyelidikan dari Human Rights Watch, Israel terbukti menggunakan berbagai senjata yang dilarang oleh hukum internasional, seperti fosfor putih. Sekali lagi, ini semua sudah terjadi lebih dari 75 tahun! Namun, nggak cuma nurani yang akan terusik. Akal kita juga. Kok bisa ya kejahatan demi kejahatan terjadi terang benderang tapi dunia tidak bisa apa-apa? Kenapa Amerika Serikat justru meloloskan undang-undang yang memberi sanksi pada para pejabat International Criminal Court kalau berani menangkap pejabat Israel? AS biasanya marah-marah kalau ada negara lain mencoba memengaruhi pemilu AS, menyerang kantor perwakilan, atau menyerang dan membunuh kru kapal perangnya. Mengapa AS membiarkan saja Israel melakukan semua hal itu terhadap AS, dan malah menambah bantuan ekonomi dan militernya ke entitas Zionis? Kalau kita diskusikan lebih panjang dan luas lagi, kita juga akan ketemu pertanyaan-pertanyaan yang makin mengusik. Mengapa seorang yang sering disebut-sebut sebagai antisemit seperti Arthur Balfour justru mendukung Zionisme? Benarkah orang Palestina nggak mau damai? Mengapa Zionis membunuh diplomat Swedia yang diutus PBB? Mengapa teroris yang mengebom Hotel King David bisa menjadi perdana menteri, sementara pemenang pemilu yang sah tidak diakui karena dianggap teroris? Temukan jawaban dari pertanyaan-pertanyaan itu serta berbagai pertanyaan lainnya terkait Palestina di dalam buku ini. Ia juga bisa menjadi bekal yang baik untuk membuka pikiran sebagian kita atau teman kita yang masih dibuat bingung oleh aparatur pendukung genosida dan apartheid. Kalau sudah baca, pertanyaannya tinggal. Apakah kamu cuma bisa diam saja?
+
+Yang Kamu Belum Tahu Soal Palestina adalah buku nonfiksi karya Shofwan Al-Banna yang diterbitkan Pro-U Media pada tahun 2024. Buku ini membahas konflik Palestina dan Israel dengan bahasa yang santai, menyasar pembaca muda yang ingin memahami persoalan ini lebih dalam.
+
+Sinopsisnya menunjukkan bahwa buku ini disusun dalam bentuk pertanyaan-pertanyaan yang sering muncul, mulai dari sejarah Deklarasi Balfour, peran Amerika Serikat, hingga peristiwa-peristiwa penting dalam sejarah konflik tersebut. Penulis juga merujuk pada data korban dan laporan lembaga seperti Human Rights Watch untuk menjelaskan situasi di Gaza sejak Oktober 2023.
+
+Buku ini ditulis dengan sudut pandang yang tegas membela Palestina. Pembaca yang ingin memahami konflik ini secara menyeluruh dapat membacanya bersama sumber-sumber lain. Buku ini cocok bagi pembaca yang ingin mempelajari sejarah dan konteks politik di balik berita tentang Palestina.$$,
+ $$https://covers.openlibrary.org/b/id/14650181-L.jpg$$),
+($$Mata Keramat$$,
+ $$Sinta Yudisia$$,
+ $$Syab Publishing$$,
+ $$2025$$,
+ $$Novel ini menceritakan tentang Mutiara yang memiliki kondisi khusus dimana dia bisa merasakan dan melihat makhluk halus. Lengkap dengan segala permasalahan dia menghadapi ibunya yang sakit mental, masalah pertemanan, masalah akademik, pekerjaan dan beban psikologis lainnya.
+
+Mata Keramat adalah novel karya Sinta Yudisia yang diterbitkan Syab Publishing pada tahun 2025. Dari sinopsisnya, novel ini mengikuti Mutiara, seorang gadis yang memiliki kemampuan merasakan dan melihat makhluk halus.
+
+Yang menarik, kemampuan gaib itu tidak berdiri sendiri. Mutiara juga harus menghadapi persoalan yang sangat manusiawi: ibunya yang mengalami gangguan mental, masalah pertemanan, tuntutan akademik, pekerjaan, dan beban psikologis lainnya. Perpaduan unsur supernatural dengan isu kesehatan mental dan keluarga membuat cerita ini lebih dari sekadar kisah horor.
+
+Buku ini cocok bagi pembaca yang menyukai fiksi bernuansa misteri dan supernatural, sekaligus cerita tentang ketahanan seseorang menghadapi masalah keluarga dan tekanan hidup.
+
+Di halaman penjualannya, novel ini digambarkan dengan suasana yang mencekam: sosok-sosok tak kasat mata yang menunggu dalam kegelapan, dan makhluk-makhluk yang muncul saat senja, misalnya di lorong sekolah yang sepi. Gambaran ini menunjukkan bahwa sebagian cerita berlangsung di lingkungan sekolah, dekat dengan keseharian pembaca remaja.
+
+Sinta Yudisia, yang bernama lengkap Sinta Yudisia Wisudanti, adalah penulis asal Tegal. Ia dikenal menulis banyak novel, termasuk novel bertema psikologi dan cerita horor untuk anak. Latar belakang itu terasa dalam Mata Keramat, yang tidak hanya menghadirkan unsur gaib, tetapi juga memperhatikan kondisi kejiwaan tokoh-tokohnya, seperti ibu Mutiara yang mengalami gangguan mental dan beban psikologis yang dipikul Mutiara sendiri.$$,
+ $$https://covers.openlibrary.org/b/id/15113412-L.jpg$$),
+($$Flâneur$$,
+ $$Alief Rahman$$,
+ $$PT Kreasi Makna Aneka$$,
+ $$2023$$,
+ $$Apakah cinta hanya ilusi yang kita ciptakan sendiri? Apakah setiap pertemuan hanyalah kebetulan atau takdir yang telah diatur? Flâneur adalah kumpulan cerita yang menangkap fragmen-fragmen kehidupan dengan nuansa reflektif, melankolis, dan penuh makna. Dari kisah seorang pria yang terjebak dalam perselingkuhan, perdebatan abadi antara hati dan logika di atas panggung, hingga perjalanan tanpa arah di lorong-lorong kota, setiap cerita dalam buku ini mengundangmu untuk berhenti sejenak dan merenung.
+
+Flâneur adalah kumpulan cerita karya Alief Rahman yang terbit pada tahun 2023. Judulnya diambil dari istilah bahasa Prancis untuk orang yang berjalan-jalan menyusuri kota sambil mengamati kehidupan di sekitarnya, sebuah gambaran yang sesuai dengan isi buku ini.
+
+Sesuai sinopsisnya, cerita-cerita dalam buku ini menangkap potongan-potongan kehidupan dengan suasana reflektif dan melankolis, mulai dari kisah perselingkuhan, pergulatan antara hati dan logika, hingga perjalanan tanpa arah di lorong-lorong kota. Pertanyaan tentang cinta, kebetulan, dan takdir menjadi benang merahnya.
+
+Karena berbentuk kumpulan cerita, buku ini bisa dibaca sedikit demi sedikit. Cocok bagi pembaca yang menyukai cerita pendek yang tenang dan mengajak merenung.$$,
+ $$https://covers.openlibrary.org/b/id/14843394-L.jpg$$),
+($$Matahari di Balik Bukit Partisan$$,
+ $$Cumbu Sigil$$,
+ $$Nyorangan Books$$,
+ $$2025$$,
+ $$‘[...] Mereka mati saat mereka mulai percaya bahwa nama mereka, pekerjaan mereka, atau agama mereka, lebih penting daripada diri mereka sendiri.’ Matahari di Balik Bukit Partisan menyajikan sebuah kekuatan naratif yang tidak terletak pada kisah kepahlawanan, melainkan pada potret banal tentang upaya bertahan hidup di dalam sistem yang menyesakkan. Proposisi ini berakar pada penolakan total terhadap semua bentuk juru selamat—baik itu negara dengan jargon pembangunannya, kaum revolusioner dengan idealisme naifnya, maupun sang protagonis sendiri yang menolak jubah kepahlawanan.
+
+Matahari di Balik Bukit Partisan adalah karya Cumbu Sigil yang diterbitkan Nyorangan Books di Sumedang pada tahun 2025. Di halaman judulnya, buku ini disebut sebagai antinovel, yaitu karya fiksi yang sengaja tidak mengikuti pola novel konvensional.
+
+Penulis dan penerbitnya menyatakan melepaskan semua hak cipta atas karya ini dan menempatkannya di domain publik. Cerita dibuka di Jakarta, dengan tokoh aku seorang penulis yang bekerja di depan mesin tik di kamar sempit yang penuh asap rokok.
+
+Seperti tergambar dari sinopsisnya, kekuatan buku ini bukan pada kisah kepahlawanan, melainkan pada potret upaya bertahan hidup di dalam sistem yang menekan, dengan penolakan terhadap segala bentuk sosok penyelamat. Buku ini cocok bagi pembaca yang menyukai prosa yang bermain dengan bentuk dan gagasan, serta fiksi yang mempertanyakan identitas dan kekuasaan.
+
+Bab pertamanya dibuka dengan suasana kamar yang pengap: asbak kaleng bekas biskuit yang penuh puntung kretek, mesin tik Remington, dan suara knalpot kendaraan umum dari jalanan Jakarta. Tokoh aku menolak ajakan seorang anak muda dari lingkaran diskusi, lalu teringat pada sahabatnya, Darman, yang pernah mengajaknya merenungkan apa yang sebenarnya diimani manusia. Dari bagian pembuka ini, pembaca sudah bisa merasakan nada cerita yang sinis, getir, dan penuh perenungan.$$,
+ $$https://covers.openlibrary.org/b/id/15110868-L.jpg$$);
