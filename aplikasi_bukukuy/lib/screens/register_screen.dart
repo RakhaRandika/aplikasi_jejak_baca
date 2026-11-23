@@ -40,8 +40,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _showError('Semua kolom wajib diisi');
       return;
     }
-    if (password.length < 6) {
-      _showError('Kata sandi minimal 6 karakter');
+    if (password.length < 8) {
+      _showError('Kata sandi minimal 8 karakter');
       return;
     }
     if (password != _konfirmasiController.text) {
@@ -337,7 +337,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SizedBox(height: 14),
         AuthField(
           label: 'KATA SANDI',
-          hint: 'Minimal 6 karakter',
+          hint: 'Minimal 8 karakter',
           controller: _passwordController,
           obscureText: _hidePassword,
           textInputAction: TextInputAction.next,

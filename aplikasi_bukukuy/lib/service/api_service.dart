@@ -22,7 +22,7 @@ class ApiService {
     defaultValue: 'http://localhost:3000',
   );
   static const baseUrl = '$_apiUrl/api';
-  static const _timeout = Duration(seconds: 15);
+  static const _timeout = Duration(seconds: 30);
 
   static String? token;
 

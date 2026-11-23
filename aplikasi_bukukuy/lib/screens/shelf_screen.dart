@@ -54,9 +54,6 @@ class _ShelfScreenState extends State<ShelfScreen> {
   }
 
   Widget _buildHeader() {
-    final isReady =
-        widget.state == LoadState.success || widget.state == LoadState.empty;
-
     return Container(
       color: AppColors.navy,
       child: SafeArea(
@@ -80,18 +77,14 @@ class _ShelfScreenState extends State<ShelfScreen> {
                 ],
               ),
               const SizedBox(height: 4),
-              Row(
+              const Row(
                 children: [
                   Expanded(
                     child: Text(
-                      isReady
-                          ? '${_count(ReadingStatus.finished)} selesai · '
-                                '${_count(ReadingStatus.reading)} sedang dibaca · '
-                                '${_count(ReadingStatus.wantToRead)} ingin dibaca'
-                          : 'Jejak bacaanmu',
+                      'Jejak bacaanmu',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.blueFaded,
                         fontSize: 14,
                       ),
@@ -157,10 +150,10 @@ class _ShelfScreenState extends State<ShelfScreen> {
   }
 
   Widget _buildFilterBar() {
-    final chips = <Widget>[_buildFilterChip(null, 'Semua')];
+    final chips = <Widget>[_buildFilterChip(null, 'Semua (${widget.shelf.length})')];
     for (final status in ReadingStatus.values) {
       chips.add(const SizedBox(width: 8));
-      chips.add(_buildFilterChip(status, status.label));
+      chips.add(_buildFilterChip(status, '${status.label} (${_count(status)})'));
     }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

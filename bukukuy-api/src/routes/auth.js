@@ -47,8 +47,8 @@ router.post('/register', async (req, res, next) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ success: false, message: 'Format email tidak valid', data: null });
     }
-    if (password.length < 6) {
-      return res.status(400).json({ success: false, message: 'Kata sandi minimal 6 karakter', data: null });
+    if (password.length < 8) {
+      return res.status(400).json({ success: false, message: 'Kata sandi minimal 8 karakter', data: null });
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -81,8 +81,11 @@ router.post('/login', async (req, res, next) => {
 
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ success: false, message: 'Email atau kata sandi salah', data: null });
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Email belum terdaftar', data: null });
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ success: false, message: 'Kata sandi salah', data: null });
     }
 
     res.json({
