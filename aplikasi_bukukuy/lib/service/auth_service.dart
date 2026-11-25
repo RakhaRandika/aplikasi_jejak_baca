@@ -1,58 +1,89 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import '../models/user.dart';
 import 'api_service.dart';
 
+// Login, register, dan logout lewat Supabase Auth.
 class AuthService {
-  static const _tokenKey = 'auth_token';
-
   static User? currentUser;
 
-  static bool get isLoggedIn => ApiService.token != null && currentUser != null;
+  static sb.GoTrueClient get _auth => sb.Supabase.instance.client.auth;
 
-  static Future<void> login(String email, String password) async {
-    final data = await ApiService.login(email, password);
-    await _saveSession(data);
+  static bool get isLoggedIn =>
+      _auth.currentSession != null && currentUser != null;
+
+  static Future<void> login(String email, String password) {
+    return ApiService.run(() async {
+      final res = await _auth.signInWithPassword(
+        email: email.trim().toLowerCase(),
+        password: password,
+      );
+      _setUser(res.user);
+    });
   }
 
-  static Future<void> register(
-    String nama,
-    String email,
-    String password,
-  ) async {
-    final data = await ApiService.register(nama, email, password);
-    await _saveSession(data);
+  static Future<void> register(String nama, String email, String password) {
+    return ApiService.run(() async {
+      final namaBersih = nama.trim();
+      final emailBersih = email.trim().toLowerCase();
+      if (namaBersih.isEmpty || emailBersih.isEmpty || password.isEmpty) {
+        throw ApiException('Nama, email, dan kata sandi wajib diisi');
+      }
+      if (password.length < 8) {
+        throw ApiException('Kata sandi minimal 8 karakter');
+      }
+
+      final res = await _auth.signUp(
+        email: emailBersih,
+        password: password,
+        data: {'nama': namaBersih},
+      );
+
+      if (res.user != null && (res.user!.identities ?? const []).isEmpty) {
+        throw ApiException('Email sudah terdaftar');
+      }
+      if (res.session == null) {
+        throw ApiException(
+          'Akun berhasil dibuat. Cek email untuk verifikasi, lalu login',
+        );
+      }
+      _setUser(res.user);
+    });
   }
 
   static Future<void> restoreSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(_tokenKey);
-    if (saved == null) return;
-
-    ApiService.token = saved;
+    final session = _auth.currentSession;
+    if (session == null) return;
     try {
-      currentUser = await ApiService.me();
-    } on ApiException catch (e) {
-      if (e.statusCode == 401) {
-        await logout();
-      } else {
-        ApiService.token = null;
-      }
+      final res = await _auth.getUser();
+      _setUser(res.user ?? session.user);
+    } on sb.AuthRetryableFetchException {
+      _setUser(session.user);
+    } on sb.AuthException {
+      await logout();
+    } catch (_) {
+      _setUser(session.user);
     }
   }
 
   static Future<void> logout() async {
-    ApiService.token = null;
     currentUser = null;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_tokenKey);
+    try {
+      await _auth.signOut();
+    } catch (_) {
+      // abaikan, sesi lokal sudah dihapus
+    }
   }
 
-  static Future<void> _saveSession(Map<String, dynamic> data) async {
-    final token = data['token'].toString();
-    ApiService.token = token;
-    currentUser = User.fromJson(Map<String, dynamic>.from(data['user'] as Map));
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_tokenKey, token);
+  static void _setUser(sb.User? user) {
+    if (user == null) {
+      currentUser = null;
+      return;
+    }
+    currentUser = User(
+      idUser: user.id,
+      nama: (user.userMetadata?['nama'] ?? '').toString(),
+      email: user.email ?? '',
+    );
   }
 }

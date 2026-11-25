@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 
 import '../enums/reading_status.dart';
 import '../models/book.dart';
-import '../models/user.dart';
 
 class ApiException implements Exception {
   final String message;
@@ -16,149 +14,147 @@ class ApiException implements Exception {
   String toString() => message;
 }
 
+// Mengambil data buku dan rak bacaan dari Supabase.
 class ApiService {
-  static const _apiUrl = String.fromEnvironment(
-    'API_URL',
-    defaultValue: 'http://localhost:3000',
-  );
-  static const baseUrl = '$_apiUrl/api';
   static const _timeout = Duration(seconds: 30);
 
-  static String? token;
+  static SupabaseClient get _db => Supabase.instance.client;
 
-  static Map<String, String> get _headers => {
-    'Content-Type': 'application/json',
-    if (token != null) 'Authorization': 'Bearer $token',
-  };
-
-  static Future<Map<String, dynamic>> login(
-    String email,
-    String password,
-  ) async {
-    final data = await _send(
-      () => http.post(
-        Uri.parse('$baseUrl/auth/login'),
-        headers: _headers,
-        body: jsonEncode({'email': email, 'password': password}),
-      ),
-    );
-    return Map<String, dynamic>.from(data as Map);
+  static Future<List<Book>> getBooks({String? search}) {
+    return run(() async {
+      var query = _db.from('buku').select();
+      final q = _clean(search);
+      if (q.isNotEmpty) {
+        query = query.or('judul.ilike.%$q%,penulis.ilike.%$q%');
+      }
+      final rows = await query.order('id_buku', ascending: true);
+      return rows.map(Book.fromJson).toList();
+    });
   }
 
-  static Future<Map<String, dynamic>> register(
-    String nama,
-    String email,
-    String password,
-  ) async {
-    final data = await _send(
-      () => http.post(
-        Uri.parse('$baseUrl/auth/register'),
-        headers: _headers,
-        body: jsonEncode({'nama': nama, 'email': email, 'password': password}),
-      ),
-    );
-    return Map<String, dynamic>.from(data as Map);
-  }
-
-  static Future<User> me() async {
-    final data = await _send(
-      () => http.get(Uri.parse('$baseUrl/auth/me'), headers: _headers),
-    );
-    return User.fromJson(Map<String, dynamic>.from(data as Map));
-  }
-
-  static Future<List<Book>> getBooks({String? search}) async {
-    final uri = Uri.parse('$baseUrl/buku').replace(
-      queryParameters: (search != null && search.isNotEmpty)
-          ? {'search': search}
-          : null,
-    );
-    final data = await _send(() => http.get(uri, headers: _headers));
-    return _toBooks(data);
-  }
-
-  static Future<List<Book>> getShelf() async {
-    final data = await _send(
-      () => http.get(Uri.parse('$baseUrl/jejak-baca'), headers: _headers),
-    );
-    return _toBooks(data);
+  static Future<List<Book>> getShelf() {
+    return run(() async {
+      final rows = await _db
+          .from('rak_baca')
+          .select('id_buku, status, waktu_ditambahkan, buku(*)')
+          .order('waktu_ditambahkan', ascending: false);
+      return rows
+          .where((r) => r['buku'] != null)
+          .map(
+            (r) => Book.fromJson({
+              ...Map<String, dynamic>.from(r['buku'] as Map),
+              'status': r['status'],
+            }),
+          )
+          .toList();
+    });
   }
 
   static Future<void> addToShelf(
     String idBuku, {
     ReadingStatus status = ReadingStatus.wantToRead,
-  }) async {
-    await _send(
-      () => http.post(
-        Uri.parse('$baseUrl/jejak-baca'),
-        headers: _headers,
-        body: jsonEncode({
-          'id_buku': int.tryParse(idBuku) ?? idBuku,
+  }) {
+    return run(() async {
+      try {
+        await _db.from('rak_baca').insert({
+          'id_buku': _id(idBuku),
           'status': status.value,
-        }),
-      ),
-      okStatus: const [409],
-    );
+        });
+      } on PostgrestException catch (e) {
+        if (e.code == '23505') return; 
+        rethrow;
+      }
+    });
   }
 
   static Future<void> updateShelfStatus(
     String idBuku, {
     required ReadingStatus status,
-  }) async {
-    await _send(
-      () => http.patch(
-        Uri.parse('$baseUrl/jejak-baca/buku/$idBuku'),
-        headers: _headers,
-        body: jsonEncode({'status': status.value}),
-      ),
-    );
+  }) {
+    return run(() async {
+      final rows = await _db
+          .from('rak_baca')
+          .update({'status': status.value})
+          .eq('id_buku', _id(idBuku))
+          .select('id_rak');
+      if (rows.isEmpty) {
+        throw ApiException('Buku ini tidak ada di jejak baca');
+      }
+    });
   }
 
-  static Future<void> removeFromShelf(String idBuku) async {
-    await _send(
-      () => http.delete(
-        Uri.parse('$baseUrl/jejak-baca/buku/$idBuku'),
-        headers: _headers,
-      ),
-      okStatus: const [404],
-    );
+  static Future<void> removeFromShelf(String idBuku) {
+    return run(() async {
+      await _db.from('rak_baca').delete().eq('id_buku', _id(idBuku));
+    });
   }
 
-  static List<Book> _toBooks(dynamic data) {
-    final list = data is List ? data : const [];
-    return list
-        .map((e) => Book.fromJson(Map<String, dynamic>.from(e as Map)))
-        .toList();
-  }
-
-  static Future<dynamic> _send(
-    Future<http.Response> Function() request, {
-    List<int> okStatus = const [],
-  }) async {
-    final http.Response res;
+  static Future<T> run<T>(Future<T> Function() action) async {
     try {
-      res = await request().timeout(_timeout);
+      return await action().timeout(_timeout);
+    } on ApiException {
+      rethrow;
     } on TimeoutException {
       throw ApiException('Server tidak merespons, coba lagi');
-    } catch (_) {
-      throw ApiException('Tidak dapat terhubung ke server');
-    }
-
-    dynamic body;
-    try {
-      body = jsonDecode(res.body);
-    } catch (_) {
-      body = null;
-    }
-
-    final isSuccess = res.statusCode >= 200 && res.statusCode < 300;
-    if (!isSuccess && !okStatus.contains(res.statusCode)) {
-      final message = body is Map ? body['message']?.toString() : null;
+    } on AuthException catch (e) {
       throw ApiException(
-        message ?? 'Terjadi kesalahan (${res.statusCode})',
-        statusCode: res.statusCode,
+        _authMessage(e),
+        statusCode: int.tryParse(e.statusCode ?? ''),
       );
+    } on PostgrestException catch (e) {
+      final detail = '${e.message} ${e.details ?? ''}';
+      if (e.code == '42501' ||
+          e.code == 'PGRST301' ||
+          (e.code == '23503' && detail.contains('user_id'))) {
+        throw ApiException('Sesi berakhir, silakan login ulang', statusCode: 401);
+      }
+      if (e.code == '23503') {
+        throw ApiException('Buku tidak ditemukan');
+      }
+      throw ApiException('Terjadi kesalahan (${e.code ?? 'db'}), coba lagi');
+    } catch (e) {
+      final text = e.toString();
+      if (text.contains('SocketException') ||
+          text.contains('ClientException') ||
+          text.contains('HandshakeException')) {
+        throw ApiException('Tidak dapat terhubung ke server');
+      }
+      throw ApiException('Terjadi kesalahan (${e.runtimeType}), coba lagi');
     }
-    return body is Map ? body['data'] : null;
   }
+
+  static String _authMessage(AuthException e) {
+    if (e is AuthRetryableFetchException) {
+      return 'Tidak dapat terhubung ke server';
+    }
+    switch (e.code) {
+      case 'invalid_credentials':
+        return 'Email atau kata sandi salah';
+      case 'email_not_confirmed':
+        return 'Email belum diverifikasi. Cek kotak masuk email kamu';
+      case 'user_already_exists':
+      case 'email_exists':
+        return 'Email sudah terdaftar';
+      case 'weak_password':
+        return 'Kata sandi terlalu lemah';
+      case 'email_address_invalid':
+        return 'Format email tidak valid';
+      case 'over_request_rate_limit':
+      case 'over_email_send_rate_limit':
+        return 'Terlalu banyak percobaan, coba lagi beberapa saat lagi';
+    }
+    if (e.statusCode == '429') {
+      return 'Terlalu banyak percobaan, coba lagi beberapa saat lagi';
+    }
+    return 'Gagal masuk (${e.code ?? e.statusCode ?? 'auth'}), coba lagi';
+  }
+
+  static int _id(String idBuku) {
+    final id = int.tryParse(idBuku);
+    if (id == null) throw ApiException('ID buku tidak valid');
+    return id;
+  }
+
+  static String _clean(String? s) =>
+      (s ?? '').replaceAll(RegExp(r'[,()%*\\"]'), ' ').trim();
 }

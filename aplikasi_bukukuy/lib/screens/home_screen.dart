@@ -118,6 +118,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _showError(Object e) {
     if (!mounted) return;
+    if (e is ApiException && e.statusCode == 401) {
+      AuthService.logout();
+      Get.offAllNamed(AppRoutes.login);
+    }
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(

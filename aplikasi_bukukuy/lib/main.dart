@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'config/supabase_config.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 import 'service/auth_service.dart';
@@ -15,6 +17,10 @@ Future<void> main() async {
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
     ),
+  );
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    publishableKey: SupabaseConfig.publishableKey,
   );
   await AuthService.restoreSession();
   runApp(const JejakBacaApp());
