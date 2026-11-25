@@ -1,0 +1,18 @@
+# Render Blueprint untuk BukuKuy API.
+# Deploy: Render Dashboard → New → Blueprint → pilih repo ini.
+services:
+  - type: web
+    name: bukukuy-api
+    runtime: node
+    plan: free
+    region: singapore # paling dekat dengan database Supabase (ap-south-1)
+    rootDir: bukukuy-api
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      # Nilai rahasia diisi manual di dashboard Render (salin dari bukukuy-api/.env).
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
