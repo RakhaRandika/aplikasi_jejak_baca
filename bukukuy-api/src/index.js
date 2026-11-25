@@ -37,7 +37,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, message: 'Terjadi kesalahan server', data: null });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`BukuKuy API berjalan di http://localhost:${PORT}`);
-});
+// Dijalankan langsung (npm start) → buka server di PORT.
+// Di-import (Vercel serverless lewat api/index.js) → cukup ekspor app.
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`BukuKuy API berjalan di http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
